@@ -2,128 +2,84 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
+    <title>ভোটার তথ্য যাচাইকরণ (ডায়াগনস্টিক মোড)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ভোটার তথ্য যাচাইকরণ পোর্টাল</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600;700&display=swap" rel="stylesheet">
     
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
-        body { font-family: 'Hind Siliguri', sans-serif; background: #f0f2f5; }
-        .glass { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-        .input-box { border: 1px solid #e5e7eb; transition: all 0.2s; }
-        .input-box:focus { border-color: #2563eb; ring: 2px solid #bfdbfe; outline: none; }
-        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #2563eb; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        body { font-family: 'Hind Siliguri', sans-serif; background: #f0f2f5; padding: 20px; }
+        .error-box { background: #fee2e2; border: 2px solid #ef4444; color: #b91c1c; padding: 15px; margin-bottom: 20px; border-radius: 8px; display: none; }
+        .glass { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        select, input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 10px; }
+        button { width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        button:hover { background: #1d4ed8; }
     </style>
+
+    <script>
+        window.onerror = function(message, source, lineno, colno, error) {
+            const errBox = document.getElementById('global-error');
+            if(errBox) {
+                errBox.style.display = 'block';
+                errBox.innerHTML = `<strong>⚠️ ক্রিটিক্যাল এরর!</strong><br>
+                মেসেজ: ${message}<br>
+                লাইন নম্বর: ${lineno}<br>
+                <small>টিপস: আপনি কি Keys বসানোর সময় কোটেশন (") মুছে ফেলেছেন?</small>`;
+            }
+        };
+    </script>
 </head>
-<body class="py-8 px-4 flex flex-col items-center min-h-screen">
+<body>
 
-    <div class="w-full max-w-4xl">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-800">🗳️ ভোটার তথ্য যাচাইকরণ</h1>
-            <p class="text-gray-500 mt-2">বাংলাদেশ নির্বাচন কমিশন ডাটাবেস অনুসন্ধান</p>
-        </div>
+    <div id="global-error" class="error-box"></div>
 
-        <div class="glass p-6 md:p-8 mb-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-2xl font-bold text-center mb-5">🛠️ ডায়াগনস্টিক মোড</h1>
+
+        <div class="glass">
+            <h3>১. এলাকা নির্বাচন</h3>
+            <label>প্রশাসনিক এলাকা</label>
+            <select id="mainCat" onchange="updateSubCat()"><option>লোড হচ্ছে...</option></select>
+
+            <label>ওয়ার্ড বা ইউনিয়ন</label>
+            <select id="subCat" onchange="updateArea()" disabled><option>আগে এলাকা বাছুন</option></select>
+
+            <label>গ্রাম</label>
+            <select id="areaName" disabled><option>আগে ওয়ার্ড বাছুন</option></select>
             
-            <div id="js-error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 hidden">
-                <strong class="font-bold">সতর্কতা!</strong>
-                <span class="block sm:inline">জাভাস্ক্রিপ্ট লোড হয়নি। দয়া করে পেজটি রিফ্রেশ করুন।</span>
+            <hr class="my-5">
+
+            <h3>২. ব্যক্তি তথ্য</h3>
+            <div class="grid grid-cols-3 gap-2">
+                <select id="dobDay"><option>দিন</option></select>
+                <select id="dobMonth"><option>মাস</option></select>
+                <select id="dobYear"><option>বছর</option></select>
             </div>
 
-            <div class="mb-6">
-                <h2 class="text-lg font-bold text-gray-700 mb-4 border-l-4 border-blue-600 pl-3">১. এলাকা নির্বাচন</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-600 mb-1">প্রশাসনিক এলাকা</label>
-                        <select id="mainCat" class="input-box w-full p-2.5 rounded-lg bg-gray-50" onchange="updateSubCat()">
-                            <option value="">নির্বাচন করুন...</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-600 mb-1">ওয়ার্ড বা ইউনিয়ন</label>
-                        <select id="subCat" class="input-box w-full p-2.5 rounded-lg bg-gray-50" onchange="updateArea()" disabled>
-                            <option value="">আগে প্রশাসনিক এলাকা বাছুন</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-600 mb-1">ভোটার এলাকা (গ্রাম)</label>
-                        <select id="areaName" class="input-box w-full p-2.5 rounded-lg bg-gray-50" disabled>
-                            <option value="">আগে ওয়ার্ড/ইউনিয়ন বাছুন</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+            <label>লিঙ্গ</label>
+            <select id="gender">
+                <option value="পুরুষ">পুরুষ</option>
+                <option value="মহিলা">মহিলা</option>
+                <option value="হিজড়া">হিজড়া</option>
+            </select>
 
-            <hr class="border-gray-200 mb-6">
+            <input type="text" id="nameInput" placeholder="নাম">
+            <input type="text" id="parentInput" placeholder="পিতা/মাতা">
 
-            <div class="mb-6">
-                <h2 class="text-lg font-bold text-gray-700 mb-4 border-l-4 border-blue-600 pl-3">২. ব্যক্তি শনাক্তকরণ</h2>
-                
-                <label class="block text-sm font-semibold text-gray-600 mb-1">জন্ম তারিখ (বাংলা)</label>
-                <div class="grid grid-cols-3 gap-3 mb-4">
-                    <select id="dobDay" class="input-box rounded-lg p-2 bg-gray-50"><option>দিন</option></select>
-                    <select id="dobMonth" class="input-box rounded-lg p-2 bg-gray-50"><option>মাস</option></select>
-                    <select id="dobYear" class="input-box rounded-lg p-2 bg-gray-50"><option>বছর</option></select>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-600 mb-1">লিঙ্গ <span class="text-red-500">*</span></label>
-                        <select id="gender" class="input-box w-full p-2.5 rounded-lg bg-gray-50">
-                            <option value="পুরুষ">পুরুষ</option>
-                            <option value="মহিলা">মহিলা</option>
-                            <option value="হিজড়া">হিজড়া</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-600 mb-1">নাম (ঐচ্ছিক)</label>
-                        <input type="text" id="nameInput" class="input-box w-full p-2.5 rounded-lg" placeholder="নামের অংশ...">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-600 mb-1">পিতা/মাতা (ঐচ্ছিক)</label>
-                        <input type="text" id="parentInput" class="input-box w-full p-2.5 rounded-lg" placeholder="নামের অংশ...">
-                    </div>
-                </div>
-            </div>
-
-            <button onclick="searchVoter()" id="searchBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition flex justify-center items-center gap-3">
-                <span>অনুসন্ধান করুন</span>
-                <div id="loadingSpinner" class="loader hidden"></div>
-            </button>
-            
-            <div id="errorMsg" class="hidden mt-4 p-3 bg-red-100 text-red-700 rounded-lg text-center text-sm font-medium"></div>
+            <button id="searchBtn" onclick="searchVoter()">অনুসন্ধান করুন</button>
+            <div id="statusMsg" class="mt-3 text-center text-sm font-bold text-gray-600"></div>
         </div>
-
-        <div id="resultsSection" class="hidden w-full">
-            <h3 class="text-gray-500 font-bold text-sm mb-3 uppercase tracking-wide">ফলাফল</h3>
-            <div id="resultsList" class="space-y-3"></div>
-        </div>
-    </div>
-
-    <div id="detailModal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl transform transition-all">
-            <div class="p-6">
-                <div class="flex justify-between items-start mb-6 border-b pb-4">
-                    <div>
-                        <h3 id="modalName" class="text-2xl font-bold text-blue-600"></h3>
-                        <p class="text-sm text-gray-500 mt-1">বিস্তারিত তথ্য</p>
-                    </div>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 text-3xl font-light">&times;</button>
-                </div>
-                <div id="modalContent" class="space-y-3 text-sm text-gray-700"></div>
-                <button onclick="closeModal()" class="w-full mt-6 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 rounded-xl transition">বন্ধ করুন</button>
-            </div>
-        </div>
+        
+        <div id="results" class="mt-5 space-y-3"></div>
     </div>
 
     <script>
-        // ============================================
-        // ১. ডাটা লোডিং (Supabase এর আগেই এটি লোড হবে)
-        // ============================================
-        
+        // ==========================================
+        // ধাপ ১: ডাটা (কোনো লজিক ছাড়া)
+        // ==========================================
         const LOCATION_DATA = {
             "চট্টগ্রাম সিটি কর্পোরেশন": {
                 "ওয়ার্ড নং-০৩ (বায়জিদ বোস্তামী)": ["ওয়াজেদিয়া", "নাথপুর", "ভোলাগঞ্জ", "হরিপুর", "নেজামেহামজা", "মিয়ানগর", "ঘাটঘর", "পূর্ব শহীদনগর", "পশ্চিম শহীদনগর", "ছালেহনগর", "আমিননগর", "হাজীরপুল", "হামিদপুর", "খোন্দকারাবাদ", "হাজীপাড়া", "উত্তর মুরাদনগর", "দক্ষিণ মুরাদনগর", "ফকিরাবাদ", "ভক্তপুর", "পাঠানপুর", "ককসুনগর", "সোনাপুর", "করিমগঞ্জ", "জানআলী নগর", "নজীরাবাদ", "মীরপুর", "কামরাবাদ", "সামাদপুর", "জাহানপুর"],
@@ -155,66 +111,43 @@
                 "আহল্লা করলডেংগা ইউনিয়ন": ["উত্তর করলডেংগা", "মধ্যম করলডেংগা", "দক্ষিণ করলডেংগা", "দক্ষিণ উত্তর ভূর্ষি", "উত্তর ভূর্ষি (৫ নং ওয়ার্ড অংশ)", "উত্তর ভূর্ষি (৬ নং ওয়ার্ড অংশ)", "আহল্লা সাধারপাড়া", "আহল্লা শেখ চৌধুরী পাড়া", "আহল্লা শেখ চৌধুরী পাড়া (দক্ষিন)"]
             }
         };
-
+        
         const MONTH_MAP_BN = {"জানুয়ারি": "০১", "ফেব্রুয়ারি": "০২", "মার্চ": "০৩", "এপ্রিল": "০৪", "মে": "০৫", "জুন": "০৬", "জুলাই": "০৭", "আগস্ট": "০৮", "সেপ্টেম্বর": "০৯", "অক্টোবর": "১০", "নভেম্বর": "১১", "ডিসেম্বর": "১২"};
         const toBn = n => n.toString().replace(/\d/g, d => "০১২৩৪৫৬৭৮৯"[d]);
 
-        // ============================================
-        // ২. ড্রপডাউন পপুলেট ফাংশন (অবিলম্বে রান করবে)
-        // ============================================
-        function initDropdowns() {
-            try {
-                // ১. এলাকা সেটআপ
-                const mainSel = document.getElementById('mainCat');
-                if(mainSel && mainSel.options.length <= 1) { // ডুপ্লিকেট রোধে চেক
-                    Object.keys(LOCATION_DATA).forEach(k => mainSel.add(new Option(k, k)));
-                }
+        // ==========================================
+        // ধাপ ২: ড্রপডাউন পপুলেট (অবিলম্বে রান হবে)
+        // ==========================================
+        try {
+            const mainSel = document.getElementById('mainCat');
+            mainSel.innerHTML = '<option value="">নির্বাচন করুন...</option>';
+            Object.keys(LOCATION_DATA).forEach(k => mainSel.add(new Option(k, k)));
 
-                // ২. দিন সেটআপ
-                const dSel = document.getElementById('dobDay');
-                if(dSel && dSel.options.length <= 1) {
-                    for(let i=1; i<=31; i++) dSel.add(new Option(toBn(i), toBn(i)));
-                }
+            const dSel = document.getElementById('dobDay');
+            for(let i=1; i<=31; i++) dSel.add(new Option(toBn(i), toBn(i)));
 
-                // ৩. মাস সেটআপ
-                const mSel = document.getElementById('dobMonth');
-                if(mSel && mSel.options.length <= 1) {
-                    Object.keys(MONTH_MAP_BN).forEach(k => mSel.add(new Option(k, k)));
-                }
+            const mSel = document.getElementById('dobMonth');
+            Object.keys(MONTH_MAP_BN).forEach(k => mSel.add(new Option(k, k)));
 
-                // ৪. বছর সেটআপ
-                const ySel = document.getElementById('dobYear');
-                if(ySel && ySel.options.length <= 1) {
-                    for(let i=2008; i>=1900; i--) ySel.add(new Option(toBn(i), toBn(i)));
-                }
-                console.log("ড্রপডাউন লোড হয়েছে ✅");
-            } catch (e) {
-                console.error("ড্রপডাউন এরর:", e);
-                document.getElementById('js-error').classList.remove('hidden');
-                document.getElementById('js-error').innerHTML = "মেনু লোড হতে সমস্যা হয়েছে: " + e.message;
-            }
+            const ySel = document.getElementById('dobYear');
+            for(let i=2008; i>=1900; i--) ySel.add(new Option(toBn(i), toBn(i)));
+
+        } catch (e) {
+            alert("মেনু লোড এরর: " + e.message);
         }
 
-        // পেজ লোড হওয়ার সাথে সাথেই এটি রান করবে
-        window.onload = initDropdowns; 
-
-        // ============================================
-        // ৩. ইন্টারেক্টিভ ফাংশনস
-        // ============================================
+        // ==========================================
+        // ধাপ ৩: UI লজিক
+        // ==========================================
         function updateSubCat() {
             const main = document.getElementById('mainCat').value;
             const subSel = document.getElementById('subCat');
-            const areaSel = document.getElementById('areaName');
-            
-            subSel.innerHTML = '<option value="">নির্বাচন করুন...</option>';
-            areaSel.innerHTML = '<option value="">আগে ওয়ার্ড/ইউনিয়ন বাছুন</option>';
+            subSel.innerHTML = '<option value="">নির্বাচন করুন</option>';
             subSel.disabled = !main;
-            areaSel.disabled = true;
-
-            // 'নির্বাচন করুন' (All) অপশন যোগ
-            subSel.add(new Option("নির্বাচন করুন (সব এলাকা)", "নির্বাচন করুন"));
-
-            if(main) {
+            
+            // "নির্বাচন করুন" অপশন যোগ
+            if (main) {
+                subSel.add(new Option("নির্বাচন করুন (সব এলাকা)", "নির্বাচন করুন"));
                 Object.keys(LOCATION_DATA[main]).forEach(k => subSel.add(new Option(k, k)));
             }
         }
@@ -224,121 +157,73 @@
             const sub = document.getElementById('subCat').value;
             const areaSel = document.getElementById('areaName');
             
-            areaSel.innerHTML = '<option value="">নির্বাচন করুন...</option>';
+            areaSel.innerHTML = '<option value="">নির্বাচন করুন</option>';
             
-            // সাব-ক্যাটাগরি 'নির্বাচন করুন' হলে এলাকা ডিজেবল থাকবে
             if (sub === "" || sub === "নির্বাচন করুন") {
                 areaSel.disabled = true;
-                areaSel.innerHTML = '<option value="">পুরো ওয়ার্ড নির্বাচন করা হয়েছে</option>';
-                return;
-            }
-
-            areaSel.disabled = false;
-            // 'নির্বাচন করুন' (All) অপশন যোগ
-            areaSel.add(new Option("নির্বাচন করুন (সব গ্রাম)", "নির্বাচন করুন"));
-
-            if(main && sub) {
-                const areas = LOCATION_DATA[main][sub];
-                if(areas) {
-                    areas.forEach(k => areaSel.add(new Option(k, k)));
-                }
+            } else {
+                areaSel.disabled = false;
+                areaSel.add(new Option("নির্বাচন করুন (সব গ্রাম)", "নির্বাচন করুন"));
+                LOCATION_DATA[main][sub].forEach(k => areaSel.add(new Option(k, k)));
             }
         }
 
-        // ============================================
-        // ৪. SUPABASE কানেকশন (সবার শেষে)
-        // ============================================
-        const SUPABASE_URL = "https://qwztesrwzjpwephkwqye.supabase.co"; 
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3enRlc3J3empwd2VwaGt3cXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODIwNjMsImV4cCI6MjA4NTk1ODA2M30.SdV0Z2x2RhEnrH9MkcMpQLZJ8irnHBXVaUJOJyql15Y";
+        // ==========================================
+        // ধাপ ৪: কনফিগারেশন এবং সার্চ
+        // ==========================================
         
-        let supabase = null;
+        // ⚠️ এই দুটি লাইনে খুব সাবধানে কী (Key) বসাবেন। কোটেশন (") মুছবেন না!
+        const SUPABASE_URL = "YOUR_SUPABASE_URL_HERE"; 
+        const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY_HERE";
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // ============================================
-        // ৫. সার্চ লজিক
-        // ============================================
         async function searchVoter() {
-            // Supabase কানেকশন চেক (Late Initialization)
-            if (!supabase) {
-                try {
-                    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                } catch (e) {
-                    alert("ডাটাবেস কানেকশন এরর: কী (Keys) ঠিক আছে তো?");
-                    return;
-                }
-            }
-
             const btn = document.getElementById('searchBtn');
-            const spinner = document.getElementById('loadingSpinner');
-            const errDiv = document.getElementById('errorMsg');
-            const resSection = document.getElementById('resultsSection');
-            const resList = document.getElementById('resultsList');
-
+            const status = document.getElementById('statusMsg');
+            const results = document.getElementById('results');
+            
             btn.disabled = true;
-            spinner.classList.remove('hidden');
-            errDiv.classList.add('hidden');
-            resSection.classList.add('hidden');
-            resList.innerHTML = '';
-
-            const main = document.getElementById('mainCat').value;
-            const sub = document.getElementById('subCat').value;
-            const area = document.getElementById('areaName').value;
-            const gender = document.getElementById('gender').value;
-            const name = document.getElementById('nameInput').value.trim();
-            const parent = document.getElementById('parentInput').value.trim();
-            const d = document.getElementById('dobDay').value;
-            const m = document.getElementById('dobMonth').value;
-            const y = document.getElementById('dobYear').value;
-
-            // DOB
-            let dobQuery = null;
-            if(d !== "দিন" && m !== "মাস" && y !== "বছর") {
-                const dd = d.length === 1 ? "০"+d : d;
-                const mm = MONTH_MAP_BN[m];
-                dobQuery = `${dd}/${mm}/${y}`;
-            }
-
-            // Validation
-            let isValid = false;
-            let errorText = "";
-
-            if (!main) {
-                errorText = "দয়া করে প্রশাসনিক এলাকা নির্বাচন করুন।";
-            } else if (sub === "" || sub === "নির্বাচন করুন") {
-                if(dobQuery && name) isValid = true;
-                else errorText = "বিশাল এলাকায় খুঁজতে হলে জন্ম তারিখ এবং নাম দুটিই বাধ্যতামূলক।";
-            } else if (area === "" || area === "নির্বাচন করুন") {
-                if(dobQuery || name || parent) isValid = true;
-                else errorText = "পুরো ওয়ার্ড/ইউনিয়নে খুঁজতে হলে লিঙ্গের সাথে নাম বা জন্ম তারিখ দিন।";
-            } else {
-                isValid = true;
-            }
-
-            if(!isValid && !errorText) errorText = "তথ্য অসম্পূর্ণ।";
-
-            if(errorText) {
-                errDiv.textContent = errorText;
-                errDiv.classList.remove('hidden');
-                btn.disabled = false;
-                spinner.classList.add('hidden');
-                return;
-            }
+            status.innerText = "ডাটাবেসে খোঁজ করা হচ্ছে...";
+            status.style.color = "blue";
+            results.innerHTML = "";
 
             try {
-                let query = supabase.from('Voter').select('*');
+                // ইনপুট ভ্যালু
+                const main = document.getElementById('mainCat').value;
+                const sub = document.getElementById('subCat').value;
+                const area = document.getElementById('areaName').value;
+                const gender = document.getElementById('gender').value;
+                const name = document.getElementById('nameInput').value.trim();
+                const parent = document.getElementById('parentInput').value.trim();
                 
-                // 1. Location Logic
-                // Case A: নির্দিষ্ট গ্রাম
-                if (area !== "" && area !== "নির্বাচন করুন") {
-                    query = query.eq('voter_area_name', area);
+                const d = document.getElementById('dobDay').value;
+                const m = document.getElementById('dobMonth').value;
+                const y = document.getElementById('dobYear').value;
+
+                // DOB Build
+                let dobQuery = null;
+                if(d !== "দিন" && m !== "মাস" && y !== "বছর") {
+                    const dd = d.length === 1 ? "০"+d : d;
+                    const mm = MONTH_MAP_BN[m];
+                    dobQuery = `${dd}/${mm}/${y}`;
                 }
-                // Case B: নির্দিষ্ট ওয়ার্ড কিন্তু সব গ্রাম
-                else if (sub !== "" && sub !== "নির্বাচন করুন") {
+
+                // ভ্যালিডেশন
+                if(!main) throw new Error("প্রশাসনিক এলাকা নির্বাচন করুন");
+
+                // কুয়েরি শুরু
+                let query = supabase.from('Voter').select('*');
+
+                // লোকেশন লজিক
+                if (area && area !== "নির্বাচন করুন") {
+                    query = query.eq('voter_area_name', area);
+                } else if (sub && sub !== "নির্বাচন করুন") {
                     const allAreas = LOCATION_DATA[main][sub];
                     query = query.in('voter_area_name', allAreas);
                 }
-                // Case C: বিশাল এরিয়া (কোনো ফিল্টার নেই লোকেশনে, শুধু নাম+DOB দিয়ে খোঁজা হবে)
 
-                // 2. Filters
+                // ফিল্টার
                 query = query.eq('gender', gender);
                 if(dobQuery) query = query.ilike('dob', `%${dobQuery}%`);
                 if(name) query = query.ilike('name', `%${name}%`);
@@ -346,59 +231,47 @@
 
                 const { data, error } = await query.limit(100);
 
-                if(error) throw error;
+                if (error) throw error;
 
-                if(!data || data.length === 0) {
-                    errDiv.textContent = "❌ কোনো ভোটার পাওয়া যায়নি।";
-                    errDiv.classList.remove('hidden');
+                if (!data || data.length === 0) {
+                    status.innerText = "❌ কোনো তথ্য পাওয়া যায়নি";
+                    status.style.color = "red";
                 } else {
-                    resSection.classList.remove('hidden');
-                    data.forEach(voter => {
-                        const card = document.createElement('div');
-                        card.className = "bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center hover:shadow-md transition";
-                        card.innerHTML = `
-                            <div>
-                                <h4 class="font-bold text-gray-800 text-lg">${voter.name || 'নাম নেই'}</h4>
-                                <p class="text-sm text-gray-500 mt-1">পিতা: ${voter.father || '-'} | ভোটার: ${voter.voter_no || '-'}</p>
-                            </div>
-                            <button onclick='openModal(${JSON.stringify(voter).replace(/'/g, "&#39;")})' class="bg-blue-50 text-blue-600 px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-blue-100 transition">
-                                বিস্তারিত
-                            </button>
+                    status.innerText = `✅ ${data.length} জন ভোটার পাওয়া গেছে`;
+                    status.style.color = "green";
+                    
+                    data.forEach(v => {
+                        const div = document.createElement('div');
+                        div.className = "bg-white p-4 border rounded shadow";
+                        div.innerHTML = `
+                            <h3 class="font-bold text-lg">${v.name || 'নাম নেই'}</h3>
+                            <p class="text-gray-600">পিতা: ${v.father} | ভোটার নং: ${v.voter_no}</p>
+                            <details class="mt-2">
+                                <summary class="cursor-pointer text-blue-600 font-bold">বিস্তারিত দেখুন</summary>
+                                <div class="mt-2 text-sm text-gray-700 bg-gray-50 p-2 rounded">
+                                    <p>মাতা: ${v.mother}</p>
+                                    <p>জন্ম তারিখ: ${v.dob}</p>
+                                    <p>ঠিকানা: ${v.address}</p>
+                                    <p>কেন্দ্র: ${v.polling_center}</p>
+                                </div>
+                            </details>
                         `;
-                        resList.appendChild(card);
+                        results.appendChild(div);
                     });
                 }
-            } catch(e) {
-                console.error(e);
-                errDiv.textContent = "সার্ভার এরর: " + e.message;
-                errDiv.classList.remove('hidden');
-            }
-            btn.disabled = false;
-            spinner.classList.add('hidden');
-        }
 
-        // ============================================
-        // ৬. পপ-আপ (Modal)
-        // ============================================
-        function openModal(voter) {
-            document.getElementById('modalName').textContent = voter.name;
-            const content = document.getElementById('modalContent');
-            const fields = {
-                "পিতা": voter.father, "মাতা": voter.mother, "লিঙ্গ": voter.gender, "জন্ম তারিখ": voter.dob,
-                "পেশা": voter.profession, "ভোটার নং": voter.voter_no, "ঠিকানা": voter.address,
-                "এলাকা": `${voter.voter_area_name} (${voter.area_code})`, "ভোটকেন্দ্র": voter.polling_center,
-                "সিরিয়াল নং": voter.serial_no
-            };
-            let html = "";
-            for(const [k, v] of Object.entries(fields)) {
-                html += `<div class="flex justify-between py-2 border-b border-gray-100 last:border-0"><span class="font-bold text-gray-500 w-1/3">${k}</span><span class="text-gray-900 w-2/3 text-right">${v || '-'}</span></div>`;
+            } catch (err) {
+                console.error(err);
+                status.innerText = "এরর: " + err.message;
+                status.style.color = "red";
+                
+                // এররটি উপরেও দেখাবে
+                const errBox = document.getElementById('global-error');
+                errBox.style.display = 'block';
+                errBox.innerHTML = `<strong>লজিক এরর:</strong> ${err.message}`;
+            } finally {
+                btn.disabled = false;
             }
-            content.innerHTML = html;
-            document.getElementById('detailModal').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('detailModal').classList.add('hidden');
         }
     </script>
 </body>
