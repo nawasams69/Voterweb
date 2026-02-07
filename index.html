@@ -39,7 +39,7 @@
         .input-group:focus-within i { color: #006A4E; }
         
         /* হিরো সেকশন শ্যাডো */
-        .hero-text-shadow { text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .hero-text-shadow { text-shadow: 0 3px 6px rgba(0,0,0,0.4); }
         
         /* এনিমেশন */
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -50,76 +50,78 @@
 </head>
 <body class="text-slate-800 min-h-screen relative overflow-x-hidden">
 
-    <div class="absolute top-4 left-4 z-30 w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
+    <div class="absolute top-4 left-4 z-30 w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white">
         <img src="candidate_round.webp" alt="Logo" class="w-full h-full object-cover">
     </div>
 
-    <header class="relative w-full bg-gradient-to-b from-party-green to-party-dark text-white pt-24 pb-16 px-4 rounded-b-[50px] shadow-2xl z-10 overflow-visible">
+    <header class="relative w-full bg-gradient-to-b from-party-green to-party-dark text-white pt-28 pb-20 px-4 rounded-b-[60px] shadow-2xl z-10 overflow-visible">
         
-        <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] opacity-10 mix-blend-overlay z-0 rounded-b-[60px]"></div>
+
+        <div class="absolute top-0 right-0 w-72 h-72 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/2 z-0"></div>
         
-        <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between relative">
+        <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between relative z-10">
             
-            <div class="text-center md:text-left z-20 md:w-3/5 mb-6 md:mb-0">
-                <span class="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm border border-red-400">চট্টগ্রাম-৮ আসন</span>
+            <div class="text-center md:text-left z-20 md:w-3/5 mb-8 md:mb-0 pl-4 md:pl-0">
+                <span class="bg-red-600 text-white px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider shadow-md border-2 border-red-400 inline-block transform -skew-x-6">চট্টগ্রাম-৮ আসন</span>
                 
-                <h1 class="text-4xl md:text-6xl font-bold font-serif mt-3 mb-2 hero-text-shadow leading-tight">
+                <h1 class="text-[40px] md:text-[66px] font-bold font-serif mt-4 mb-3 hero-text-shadow leading-none drop-shadow-xl">
                     ডা. মোঃ আবু নাছের
                 </h1>
-                <p class="text-emerald-100 text-lg md:text-xl font-medium mb-6">
+                <p class="text-emerald-100 text-lg md:text-2xl font-medium mb-8 opacity-90">
                     বাংলাদেশ জামায়াতে ইসলামী মনোনীত প্রার্থী
                 </p>
 
-                <div class="flex items-center justify-center md:justify-start gap-4 bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/20 inline-flex">
-                    <div class="bg-white p-1 rounded-full shadow w-16 h-16 flex items-center justify-center">
+                <div class="flex items-center justify-center md:justify-start gap-5 bg-white/10 backdrop-blur-md p-4 rounded-3xl border border-white/20 inline-flex shadow-lg">
+                    <div class="bg-white p-2 rounded-full shadow-md w-20 h-20 flex items-center justify-center ring-4 ring-white/30">
                         <img src="symbol.png" alt="দাঁড়িপাল্লা" class="w-full h-full object-contain">
                     </div>
                     <div class="text-left pr-4">
-                        <p class="text-sm text-emerald-100">মার্কা</p>
-                        <h2 class="text-2xl font-bold text-yellow-400 drop-shadow">দাঁড়িপাল্লা</h2>
+                        <p class="text-sm text-emerald-200 font-semibold uppercase tracking-widest mb-1">মার্কায় ভোট দিন</p>
+                        <h2 class="text-3xl font-bold text-yellow-300 drop-shadow-md">দাঁড়িপাল্লা</h2>
                     </div>
                 </div>
             </div>
 
-            <div class="z-20 mt-4 md:-mt-20 md:absolute md:right-0 md:bottom-[-64px] w-64 md:w-80 transition-transform hover:scale-105 duration-500">
-                <img src="candidate_face.png" alt="Candidate" class="w-full drop-shadow-2xl filter brightness-110">
+            <div class="z-20 mt-6 md:-mt-24 md:absolute md:right-0 md:bottom-[-80px] w-80 md:w-[28rem] transition-transform hover:scale-105 duration-500 pointer-events-none">
+                <img src="candidate_face.png" alt="Candidate" class="w-full drop-shadow-2xl filter brightness-110 contrast-110">
             </div>
         </div>
     </header>
 
-    <div class="relative z-20 -mt-8 px-4 pb-12 w-full max-w-4xl mx-auto">
+    <div class="relative z-20 -mt-10 px-4 pb-12 w-full max-w-4xl mx-auto">
         
-        <div class="glass-panel rounded-3xl p-6 md:p-8 slide-up">
-            <div class="text-center mb-6">
-                <h3 class="text-xl font-bold text-party-green">ভোটার তথ্য যাচাই ও কেন্দ্র অনুসন্ধান</h3>
-                <div class="h-1 w-16 bg-party-red mx-auto mt-2 rounded-full"></div>
+        <div class="glass-panel rounded-3xl p-6 md:p-10 slide-up shadow-2xl">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-party-green font-serif">ভোটার তথ্য যাচাই ও কেন্দ্র অনুসন্ধান</h3>
+                <div class="h-1.5 w-20 bg-party-red mx-auto mt-3 rounded-full"></div>
             </div>
 
-            <div class="mb-6 bg-green-50/60 p-4 rounded-xl border border-green-100">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="mb-8 bg-green-50/70 p-5 rounded-2xl border border-green-100 shadow-inner">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label class="text-xs font-bold text-gray-500 ml-1">প্রশাসনিক এলাকা</label>
-                        <div class="input-group flex items-center bg-white border border-gray-300 rounded-lg px-2 py-2 mt-1">
-                            <i class="ph ph-buildings text-lg text-gray-400 mr-2"></i>
-                            <select id="mainCat" class="w-full bg-transparent outline-none text-sm font-semibold text-gray-700 cursor-pointer" onchange="updateSubCat()">
+                        <label class="text-xs font-bold text-gray-500 ml-1 uppercase tracking-wider">প্রশাসনিক এলাকা</label>
+                        <div class="input-group flex items-center bg-white border border-gray-300 rounded-xl px-3 py-3 mt-1 shadow-sm transition-all hover:border-party-green">
+                            <i class="ph ph-buildings text-xl text-gray-400 mr-3"></i>
+                            <select id="mainCat" class="w-full bg-transparent outline-none text-base font-bold text-gray-700 cursor-pointer" onchange="updateSubCat()">
                                 <option value="">নির্বাচন করুন...</option>
                             </select>
                         </div>
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-gray-500 ml-1">ওয়ার্ড / ইউনিয়ন</label>
-                        <div class="input-group flex items-center bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 mt-1">
-                            <i class="ph ph-map-pin text-lg text-gray-400 mr-2"></i>
-                            <select id="subCat" class="w-full bg-transparent outline-none text-sm font-semibold text-gray-700 cursor-pointer disabled:text-gray-400" onchange="updateArea()" disabled>
+                        <label class="text-xs font-bold text-gray-500 ml-1 uppercase tracking-wider">ওয়ার্ড / ইউনিয়ন</label>
+                        <div class="input-group flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 py-3 mt-1 shadow-sm transition-all">
+                            <i class="ph ph-map-pin text-xl text-gray-400 mr-3"></i>
+                            <select id="subCat" class="w-full bg-transparent outline-none text-base font-bold text-gray-700 cursor-pointer disabled:text-gray-400" onchange="updateArea()" disabled>
                                 <option value="">আগে এলাকা বাছুন</option>
                             </select>
                         </div>
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-gray-500 ml-1">গ্রাম / মহল্লা</label>
-                        <div class="input-group flex items-center bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 mt-1">
-                            <i class="ph ph-house-line text-lg text-gray-400 mr-2"></i>
-                            <select id="areaName" class="w-full bg-transparent outline-none text-sm font-semibold text-gray-700 cursor-pointer disabled:text-gray-400" disabled>
+                        <label class="text-xs font-bold text-gray-500 ml-1 uppercase tracking-wider">গ্রাম / মহল্লা</label>
+                        <div class="input-group flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 py-3 mt-1 shadow-sm transition-all">
+                            <i class="ph ph-house-line text-xl text-gray-400 mr-3"></i>
+                            <select id="areaName" class="w-full bg-transparent outline-none text-base font-bold text-gray-700 cursor-pointer disabled:text-gray-400" disabled>
                                 <option value="">আগে ওয়ার্ড বাছুন</option>
                             </select>
                         </div>
@@ -127,20 +129,20 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-5 mb-8">
                 <div class="md:col-span-5">
-                    <label class="text-xs font-bold text-gray-500 ml-1">জন্ম তারিখ</label>
-                    <div class="grid grid-cols-3 gap-2 mt-1">
-                        <select id="dobDay" class="bg-white border border-gray-300 rounded-lg py-2 text-center text-sm font-bold outline-none focus:border-party-green"><option>দিন</option></select>
-                        <select id="dobMonth" class="bg-white border border-gray-300 rounded-lg py-2 text-center text-xs font-bold outline-none focus:border-party-green"><option>মাস</option></select>
-                        <select id="dobYear" class="bg-white border border-gray-300 rounded-lg py-2 text-center text-sm font-bold outline-none focus:border-party-green"><option>বছর</option></select>
+                    <label class="text-xs font-bold text-gray-500 ml-1 uppercase tracking-wider">জন্ম তারিখ</label>
+                    <div class="grid grid-cols-3 gap-3 mt-1">
+                        <select id="dobDay" class="bg-white border border-gray-300 rounded-xl py-3 text-center text-base font-bold outline-none focus:border-party-green shadow-sm hover:border-party-green transition-all"><option>দিন</option></select>
+                        <select id="dobMonth" class="bg-white border border-gray-300 rounded-xl py-3 text-center text-sm font-bold outline-none focus:border-party-green shadow-sm hover:border-party-green transition-all"><option>মাস</option></select>
+                        <select id="dobYear" class="bg-white border border-gray-300 rounded-xl py-3 text-center text-base font-bold outline-none focus:border-party-green shadow-sm hover:border-party-green transition-all"><option>বছর</option></select>
                     </div>
                 </div>
                 <div class="md:col-span-3">
-                    <label class="text-xs font-bold text-gray-500 ml-1">লিঙ্গ <span class="text-red-500">*</span></label>
-                    <div class="input-group flex items-center bg-white border border-gray-300 rounded-lg px-2 py-2 mt-1">
-                        <i class="ph ph-gender-intersex text-lg text-gray-400 mr-2"></i>
-                        <select id="gender" class="w-full bg-transparent outline-none text-sm font-bold text-gray-700">
+                    <label class="text-xs font-bold text-gray-500 ml-1 uppercase tracking-wider">লিঙ্গ <span class="text-red-500">*</span></label>
+                    <div class="input-group flex items-center bg-white border border-gray-300 rounded-xl px-3 py-3 mt-1 shadow-sm hover:border-party-green transition-all">
+                        <i class="ph ph-gender-intersex text-xl text-gray-400 mr-3"></i>
+                        <select id="gender" class="w-full bg-transparent outline-none text-base font-bold text-gray-700">
                             <option value="পুরুষ">পুরুষ</option>
                             <option value="মহিলা">মহিলা</option>
                             <option value="হিজড়া">হিজড়া</option>
@@ -148,34 +150,34 @@
                     </div>
                 </div>
                 <div class="md:col-span-4">
-                    <label class="text-xs font-bold text-gray-500 ml-1">নাম (ঐচ্ছিক)</label>
-                    <div class="input-group flex items-center bg-white border border-gray-300 rounded-lg px-2 py-2 mt-1">
-                        <input type="text" id="nameInput" class="w-full bg-transparent outline-none text-sm font-semibold text-gray-700 placeholder-gray-400" placeholder="নামের অংশ...">
+                    <label class="text-xs font-bold text-gray-500 ml-1 uppercase tracking-wider">নাম (ঐচ্ছিক)</label>
+                    <div class="input-group flex items-center bg-white border border-gray-300 rounded-xl px-3 py-3 mt-1 shadow-sm hover:border-party-green transition-all">
+                        <input type="text" id="nameInput" class="w-full bg-transparent outline-none text-base font-semibold text-gray-700 placeholder-gray-400" placeholder="নামের অংশ...">
                     </div>
                 </div>
                 <div class="md:col-span-12">
-                    <label class="text-xs font-bold text-gray-500 ml-1">পিতা বা মাতার নাম (ঐচ্ছিক)</label>
-                    <div class="input-group flex items-center bg-white border border-gray-300 rounded-lg px-2 py-2 mt-1">
-                        <input type="text" id="parentInput" class="w-full bg-transparent outline-none text-sm font-semibold text-gray-700 placeholder-gray-400" placeholder="পিতা বা মাতার নাম...">
+                    <label class="text-xs font-bold text-gray-500 ml-1 uppercase tracking-wider">পিতা বা মাতার নাম (ঐচ্ছিক)</label>
+                    <div class="input-group flex items-center bg-white border border-gray-300 rounded-xl px-3 py-3 mt-1 shadow-sm hover:border-party-green transition-all">
+                        <input type="text" id="parentInput" class="w-full bg-transparent outline-none text-base font-semibold text-gray-700 placeholder-gray-400" placeholder="পিতা বা মাতার নাম...">
                     </div>
                 </div>
             </div>
 
-            <button onclick="searchVoter()" id="searchBtn" class="w-full bg-party-red hover:bg-red-700 text-white font-bold text-lg py-3.5 rounded-xl shadow-lg shadow-red-500/30 transition-transform active:scale-95 flex items-center justify-center gap-2 vote-anim border-b-4 border-red-800">
-                <i class="ph-bold ph-magnifying-glass text-xl"></i>
-                <span>অনুসন্ধান করুন</span>
+            <button onclick="searchVoter()" id="searchBtn" class="w-full bg-party-red hover:bg-red-700 text-white font-bold text-xl py-4 rounded-2xl shadow-lg shadow-red-500/40 transition-transform active:scale-95 flex items-center justify-center gap-3 vote-anim border-b-4 border-red-900 tracking-wide">
+                <i class="ph-bold ph-magnifying-glass text-2xl"></i>
+                <span>তথ্য অনুসন্ধান করুন</span>
             </button>
 
-            <div id="statusMsg" class="mt-4 text-center hidden p-3 rounded-lg bg-gray-50 border border-gray-200 text-sm font-medium"></div>
+            <div id="statusMsg" class="mt-6 text-center hidden p-4 rounded-xl bg-gray-50 border border-gray-200 text-sm font-medium"></div>
         </div>
 
-        <div id="resultsList" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6"></div>
+        <div id="resultsList" class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8"></div>
 
-        <div class="mt-10 text-center">
-            <p class="text-party-green font-bold text-lg">দেশ গড়তে মার্কায় ভোট দিন</p>
-            <div class="flex items-center justify-center gap-2 mt-2 opacity-70">
-                <img src="symbol.png" class="w-6 h-6 grayscale opacity-50">
-                <p class="text-xs">প্রচার সেল | ডা. মোঃ আবু নাছের</p>
+        <div class="mt-12 text-center pb-8">
+            <p class="text-party-green font-bold text-xl font-serif">দেশ গড়তে মার্কায় ভোট দিন</p>
+            <div class="flex items-center justify-center gap-3 mt-3 opacity-80 bg-white/50 inline-flex px-4 py-2 rounded-full">
+                <img src="symbol.png" class="w-6 h-6 grayscale opacity-70">
+                <p class="text-sm font-semibold text-party-dark">ডা. মোঃ আবু নাছের মিডিয়া সেল</p>
             </div>
         </div>
     </div>
@@ -183,25 +185,25 @@
     <div id="detailModal" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-emerald-900/80 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl relative transform transition-all scale-100 overflow-hidden slide-up border-4 border-party-green">
+            <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl relative transform transition-all scale-100 overflow-hidden slide-up border-4 border-party-green">
                 
-                <div class="bg-party-green p-5 border-b border-green-700 flex justify-between items-center text-white">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-white p-1 rounded-full w-10 h-10 overflow-hidden">
+                <div class="bg-party-green p-6 border-b border-green-700 flex justify-between items-center text-white bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] bg-blend-overlay">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-white p-1 rounded-full w-14 h-14 overflow-hidden shadow-md ring-2 ring-white/50">
                             <img src="candidate_round.webp" class="w-full h-full object-cover">
                         </div>
                         <div>
-                            <h3 id="modalTitle" class="text-xl font-bold font-serif"></h3>
-                            <p class="text-xs text-green-200">সঠিক ভোটার তথ্য</p>
+                            <h3 id="modalTitle" class="text-2xl font-bold font-serif leading-tight"></h3>
+                            <p class="text-sm text-green-100 font-medium flex items-center gap-1 mt-1"><i class="ph-fill ph-check-circle text-yellow-300"></i> সঠিক ভোটার তথ্য</p>
                         </div>
                     </div>
-                    <button onclick="closeModal()" class="text-white/80 hover:text-white text-2xl">&times;</button>
+                    <button onclick="closeModal()" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/30 text-white transition">&times;</button>
                 </div>
 
-                <div id="modalBody" class="p-5"></div>
+                <div id="modalBody" class="p-6"></div>
 
-                <div class="p-4 bg-gray-50 text-center border-t">
-                    <button onclick="closeModal()" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-bold text-gray-700">বন্ধ করুন</button>
+                <div class="p-5 bg-gray-50 text-center border-t">
+                    <button onclick="closeModal()" class="w-full px-6 py-3.5 bg-gray-200 hover:bg-gray-300 rounded-xl text-base font-bold text-gray-700 transition">বন্ধ করুন</button>
                 </div>
             </div>
         </div>
@@ -338,31 +340,31 @@
                 if(error) throw error;
 
                 if(!data.length) {
-                    statusDiv.className = "mt-6 text-center p-4 rounded-xl bg-red-50 text-red-600 block slide-up";
+                    statusDiv.className = "mt-6 text-center p-4 rounded-xl bg-red-50 text-red-600 block slide-up font-bold border-2 border-red-100";
                     statusDiv.innerHTML = `<i class="ph-bold ph-warning-circle text-lg mr-1"></i> কোনো ভোটার পাওয়া যায়নি`;
                 } else {
-                    statusDiv.className = "mt-6 text-center p-4 rounded-xl bg-green-50 text-party-green block slide-up";
+                    statusDiv.className = "mt-6 text-center p-4 rounded-xl bg-green-50 text-party-green block slide-up font-bold border-2 border-green-100";
                     statusDiv.innerHTML = `<i class="ph-bold ph-check-circle text-lg mr-1"></i> ${data.length} জন ভোটার পাওয়া গেছে`;
                     
                     data.forEach((v, index) => {
                         const card = document.createElement('div');
-                        card.className = "bg-white p-4 rounded-xl border-l-4 border-party-green shadow hover:shadow-lg transition flex items-center justify-between cursor-pointer slide-up";
+                        card.className = "bg-white p-5 rounded-2xl border-l-[6px] border-party-green shadow-md hover:shadow-xl transition-all flex items-center justify-between cursor-pointer slide-up hover:bg-green-50/30";
                         card.style.animationDelay = `${index * 0.05}s`;
                         card.onclick = () => openModal(v);
                         
                         card.innerHTML = `
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-party-green font-bold"><i class="ph-fill ph-user text-xl"></i></div>
-                                <div><h4 class="font-bold text-gray-800">${v.name}</h4><p class="text-xs text-gray-500 mt-0.5">পিতা: ${v.father}</p></div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-party-green font-bold shadow-sm"><i class="ph-fill ph-user text-2xl"></i></div>
+                                <div><h4 class="font-bold text-gray-800 text-lg">${v.name}</h4><p class="text-sm text-gray-600 font-medium mt-0.5">পিতা: ${v.father}</p></div>
                             </div>
-                            <div class="w-8 h-8 rounded-full border flex items-center justify-center text-gray-400"><i class="ph-bold ph-caret-right"></i></div>
+                            <div class="w-10 h-10 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-400 bg-white shadow-sm group-hover:border-party-green"><i class="ph-bold ph-caret-right text-lg"></i></div>
                         `;
                         list.appendChild(card);
                     });
                 }
 
             } catch(e) {
-                statusDiv.className = "mt-6 text-center p-4 rounded-xl bg-red-50 text-red-600 block slide-up";
+                statusDiv.className = "mt-6 text-center p-4 rounded-xl bg-red-50 text-red-600 block slide-up font-bold";
                 statusDiv.innerHTML = `সমস্যা: ${e.message}`;
             } finally {
                 btn.disabled = false;
@@ -375,15 +377,17 @@
             document.getElementById('modalTitle').innerText = voter.name;
             const body = document.getElementById('modalBody');
             
-            // হাইলাইটেড ভোটকেন্দ্র (Top Priority)
             let html = `
-                <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl border border-green-200 mb-4 text-center shadow-inner">
-                    <div class="flex items-center justify-center gap-2 text-party-green mb-1">
-                        <i class="ph-fill ph-house-line text-lg"></i>
-                        <span class="text-xs font-bold uppercase tracking-widest">আপনার ভোটকেন্দ্র</span>
-                    </div>
-                    <div class="text-xl font-bold text-gray-900 leading-tight">
-                        ${voter.polling_center || 'তথ্য নেই'}
+                <div class="bg-gradient-to-br from-green-50 to-emerald-100 p-5 rounded-2xl border-2 border-green-200 mb-5 text-center shadow-md relative overflow-hidden">
+                    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] opacity-10 mix-blend-overlay"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-center gap-2 text-party-dark mb-1">
+                            <i class="ph-fill ph-house-line text-xl"></i>
+                            <span class="text-sm font-bold uppercase tracking-widest">আপনার ভোটকেন্দ্র</span>
+                        </div>
+                        <div class="text-2xl font-bold text-gray-900 leading-tight mt-1">
+                            ${voter.polling_center || 'তথ্য নেই'}
+                        </div>
                     </div>
                 </div>
             `;
@@ -400,12 +404,12 @@
 
             fields.forEach(f => {
                 html += `
-                <div class="flex items-center justify-between p-2.5 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition rounded">
+                <div class="flex items-center justify-between p-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition rounded-lg">
                     <div class="flex items-center gap-3 text-gray-500">
-                        <i class="ph-fill ph-${f.icon} text-lg text-party-green opacity-70"></i>
-                        <span class="font-medium text-sm">${f.label}</span>
+                        <i class="ph-fill ph-${f.icon} text-xl text-party-green opacity-80"></i>
+                        <span class="font-semibold text-sm">${f.label}</span>
                     </div>
-                    <span class="font-bold text-gray-800 text-right text-sm">${f.val || '-'}</span>
+                    <span class="font-bold text-gray-800 text-right text-base">${f.val || '-'}</span>
                 </div>`;
             });
 
