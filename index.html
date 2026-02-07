@@ -21,9 +21,9 @@
                     },
                     colors: {
                         party: {
-                            green: '#006A4E', // জামায়াতের পতাকার গাঢ় সবুজ
+                            green: '#006A4E', 
                             dark: '#004d38',
-                            red: '#D32F2F',   // লাল রঙ
+                            red: '#D32F2F',
                             light: '#E8F5E9'
                         }
                     }
@@ -34,56 +34,54 @@
 
     <style>
         body { background-color: #f0fdf4; background-image: radial-gradient(#006a4e 0.5px, transparent 0.5px); background-size: 20px 20px; }
-        .glass-panel { background: rgba(255, 255, 255, 0.95); border: 1px solid #bbf7d0; box-shadow: 0 10px 40px -10px rgba(0, 106, 78, 0.2); backdrop-filter: blur(10px); }
+        .glass-panel { background: rgba(255, 255, 255, 0.96); border: 1px solid #bbf7d0; box-shadow: 0 10px 40px -10px rgba(0, 106, 78, 0.2); backdrop-filter: blur(10px); }
         .input-group:focus-within { border-color: #006A4E; ring: 2px solid #a7f3d0; }
         .input-group:focus-within i { color: #006A4E; }
         
-        /* হিরো সেকশন শ্যাডো */
         .hero-text-shadow { text-shadow: 0 3px 6px rgba(0,0,0,0.4); }
-        
-        /* এনিমেশন */
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .slide-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(211, 47, 47, 0); } 100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); } }
         .vote-anim { animation: pulse-red 2s infinite; }
     </style>
 </head>
-<body class="text-slate-800 min-h-screen relative overflow-x-hidden">
+<body class="text-slate-800 min-h-screen relative overflow-x-hidden font-sans">
 
     <div class="absolute top-4 left-4 z-30 w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white">
         <img src="candidate_round.webp" alt="Logo" class="w-full h-full object-cover">
     </div>
 
-    <header class="relative w-full bg-gradient-to-b from-party-green to-party-dark text-white pt-28 pb-20 px-4 rounded-b-[60px] shadow-2xl z-10 overflow-visible">
+    <header class="relative w-full bg-gradient-to-b from-party-green to-party-dark text-white pt-36 md:pt-44 pb-20 px-4 rounded-b-[60px] shadow-2xl z-10 overflow-visible">
         
-        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] opacity-10 mix-blend-overlay z-0 rounded-b-[60px]"></div>
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] opacity-25 mix-blend-overlay z-0 rounded-b-[60px]"></div>
 
-        <div class="absolute top-0 right-0 w-72 h-72 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/2 z-0"></div>
-        
-        <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between relative z-10">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between relative z-10">
             
-            <div class="text-center md:text-left z-20 md:w-3/5 mb-8 md:mb-0 pl-4 md:pl-0">
-                <span class="bg-red-600 text-white px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider shadow-md border-2 border-red-400 inline-block transform -skew-x-6">চট্টগ্রাম-৮ আসন</span>
+            <div class="text-center md:text-left z-20 md:w-3/5 mb-10 md:mb-0 pl-2 md:pl-0">
                 
-                <h1 class="text-[40px] md:text-[66px] font-bold font-serif mt-4 mb-3 hero-text-shadow leading-none drop-shadow-xl">
+                <div class="inline-block bg-red-600 text-white px-5 py-2 rounded-full shadow-lg border-2 border-red-400 mb-4 transform hover:scale-105 transition-transform">
+                    <span class="text-xl md:text-2xl font-bold uppercase tracking-wider font-serif">চট্টগ্রাম-৮ আসন</span>
+                </div>
+                
+                <h1 class="text-[42px] md:text-[70px] font-bold font-serif mt-2 mb-2 hero-text-shadow leading-none drop-shadow-xl">
                     ডা. মোঃ আবু নাছের
                 </h1>
-                <p class="text-emerald-100 text-lg md:text-2xl font-medium mb-8 opacity-90">
+                <p class="text-emerald-100 text-xl md:text-2xl font-medium mb-8 opacity-95">
                     বাংলাদেশ জামায়াতে ইসলামী মনোনীত প্রার্থী
                 </p>
 
-                <div class="flex items-center justify-center md:justify-start gap-5 bg-white/10 backdrop-blur-md p-4 rounded-3xl border border-white/20 inline-flex shadow-lg">
-                    <div class="bg-white p-2 rounded-full shadow-md w-20 h-20 flex items-center justify-center ring-4 ring-white/30">
+                <div class="flex items-center justify-center md:justify-start gap-5 bg-white/10 backdrop-blur-md p-4 rounded-3xl border border-white/20 inline-flex shadow-lg ring-1 ring-white/10">
+                    <div class="bg-white p-2 rounded-full shadow-md w-24 h-24 flex items-center justify-center ring-4 ring-white/30">
                         <img src="symbol.png" alt="দাঁড়িপাল্লা" class="w-full h-full object-contain">
                     </div>
                     <div class="text-left pr-4">
-                        <p class="text-sm text-emerald-200 font-semibold uppercase tracking-widest mb-1">মার্কায় ভোট দিন</p>
-                        <h2 class="text-3xl font-bold text-yellow-300 drop-shadow-md">দাঁড়িপাল্লা</h2>
+                        <h2 class="text-4xl font-bold text-yellow-300 drop-shadow-md font-serif">দাঁড়িপাল্লা</h2>
+                        <p class="text-base text-emerald-100 font-semibold tracking-wide">মার্কায় ভোট দিন</p>
                     </div>
                 </div>
             </div>
 
-            <div class="z-20 mt-6 md:-mt-24 md:absolute md:right-0 md:bottom-[-80px] w-80 md:w-[28rem] transition-transform hover:scale-105 duration-500 pointer-events-none">
+            <div class="z-20 mt-8 md:-mt-32 md:absolute md:right-[-20px] md:bottom-[-80px] w-80 md:w-[32rem] transition-transform hover:scale-105 duration-500 pointer-events-none">
                 <img src="candidate_face.png" alt="Candidate" class="w-full drop-shadow-2xl filter brightness-110 contrast-110">
             </div>
         </div>
@@ -94,34 +92,34 @@
         <div class="glass-panel rounded-3xl p-6 md:p-10 slide-up shadow-2xl">
             <div class="text-center mb-8">
                 <h3 class="text-2xl font-bold text-party-green font-serif">ভোটার তথ্য যাচাই ও কেন্দ্র অনুসন্ধান</h3>
-                <div class="h-1.5 w-20 bg-party-red mx-auto mt-3 rounded-full"></div>
+                <div class="h-1.5 w-24 bg-party-red mx-auto mt-3 rounded-full"></div>
             </div>
 
-            <div class="mb-8 bg-green-50/70 p-5 rounded-2xl border border-green-100 shadow-inner">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="mb-8 bg-green-50/70 p-6 rounded-2xl border border-green-100 shadow-inner">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <div>
-                        <label class="text-xs font-bold text-gray-500 ml-1 uppercase tracking-wider">প্রশাসনিক এলাকা</label>
-                        <div class="input-group flex items-center bg-white border border-gray-300 rounded-xl px-3 py-3 mt-1 shadow-sm transition-all hover:border-party-green">
-                            <i class="ph ph-buildings text-xl text-gray-400 mr-3"></i>
-                            <select id="mainCat" class="w-full bg-transparent outline-none text-base font-bold text-gray-700 cursor-pointer" onchange="updateSubCat()">
+                        <label class="text-sm font-bold text-gray-600 ml-1 uppercase tracking-wide">প্রশাসনিক এলাকা</label>
+                        <div class="input-group flex items-center bg-white border border-gray-300 rounded-xl px-3 py-3 mt-2 shadow-sm transition-all hover:border-party-green">
+                            <i class="ph ph-buildings text-2xl text-gray-400 mr-3"></i>
+                            <select id="mainCat" class="w-full bg-transparent outline-none text-lg font-bold text-gray-800 cursor-pointer" onchange="updateSubCat()">
                                 <option value="">নির্বাচন করুন...</option>
                             </select>
                         </div>
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-gray-500 ml-1 uppercase tracking-wider">ওয়ার্ড / ইউনিয়ন</label>
-                        <div class="input-group flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 py-3 mt-1 shadow-sm transition-all">
-                            <i class="ph ph-map-pin text-xl text-gray-400 mr-3"></i>
-                            <select id="subCat" class="w-full bg-transparent outline-none text-base font-bold text-gray-700 cursor-pointer disabled:text-gray-400" onchange="updateArea()" disabled>
+                        <label class="text-sm font-bold text-gray-600 ml-1 uppercase tracking-wide">ওয়ার্ড / ইউনিয়ন</label>
+                        <div class="input-group flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 py-3 mt-2 shadow-sm transition-all">
+                            <i class="ph ph-map-pin text-2xl text-gray-400 mr-3"></i>
+                            <select id="subCat" class="w-full bg-transparent outline-none text-lg font-bold text-gray-800 cursor-pointer disabled:text-gray-400" onchange="updateArea()" disabled>
                                 <option value="">আগে এলাকা বাছুন</option>
                             </select>
                         </div>
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-gray-500 ml-1 uppercase tracking-wider">গ্রাম / মহল্লা</label>
-                        <div class="input-group flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 py-3 mt-1 shadow-sm transition-all">
-                            <i class="ph ph-house-line text-xl text-gray-400 mr-3"></i>
-                            <select id="areaName" class="w-full bg-transparent outline-none text-base font-bold text-gray-700 cursor-pointer disabled:text-gray-400" disabled>
+                        <label class="text-sm font-bold text-gray-600 ml-1 uppercase tracking-wide">গ্রাম / মহল্লা</label>
+                        <div class="input-group flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 py-3 mt-2 shadow-sm transition-all">
+                            <i class="ph ph-house-line text-2xl text-gray-400 mr-3"></i>
+                            <select id="areaName" class="w-full bg-transparent outline-none text-lg font-bold text-gray-800 cursor-pointer disabled:text-gray-400" disabled>
                                 <option value="">আগে ওয়ার্ড বাছুন</option>
                             </select>
                         </div>
@@ -129,20 +127,20 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-5 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                 <div class="md:col-span-5">
-                    <label class="text-xs font-bold text-gray-500 ml-1 uppercase tracking-wider">জন্ম তারিখ</label>
-                    <div class="grid grid-cols-3 gap-3 mt-1">
-                        <select id="dobDay" class="bg-white border border-gray-300 rounded-xl py-3 text-center text-base font-bold outline-none focus:border-party-green shadow-sm hover:border-party-green transition-all"><option>দিন</option></select>
-                        <select id="dobMonth" class="bg-white border border-gray-300 rounded-xl py-3 text-center text-sm font-bold outline-none focus:border-party-green shadow-sm hover:border-party-green transition-all"><option>মাস</option></select>
-                        <select id="dobYear" class="bg-white border border-gray-300 rounded-xl py-3 text-center text-base font-bold outline-none focus:border-party-green shadow-sm hover:border-party-green transition-all"><option>বছর</option></select>
+                    <label class="text-sm font-bold text-gray-600 ml-1 uppercase tracking-wide">জন্ম তারিখ</label>
+                    <div class="grid grid-cols-3 gap-3 mt-2">
+                        <select id="dobDay" class="bg-white border border-gray-300 rounded-xl py-3 text-center text-lg font-bold outline-none focus:border-party-green shadow-sm hover:border-party-green transition-all"><option>দিন</option></select>
+                        <select id="dobMonth" class="bg-white border border-gray-300 rounded-xl py-3 text-center text-base font-bold outline-none focus:border-party-green shadow-sm hover:border-party-green transition-all"><option>মাস</option></select>
+                        <select id="dobYear" class="bg-white border border-gray-300 rounded-xl py-3 text-center text-lg font-bold outline-none focus:border-party-green shadow-sm hover:border-party-green transition-all"><option>বছর</option></select>
                     </div>
                 </div>
                 <div class="md:col-span-3">
-                    <label class="text-xs font-bold text-gray-500 ml-1 uppercase tracking-wider">লিঙ্গ <span class="text-red-500">*</span></label>
-                    <div class="input-group flex items-center bg-white border border-gray-300 rounded-xl px-3 py-3 mt-1 shadow-sm hover:border-party-green transition-all">
-                        <i class="ph ph-gender-intersex text-xl text-gray-400 mr-3"></i>
-                        <select id="gender" class="w-full bg-transparent outline-none text-base font-bold text-gray-700">
+                    <label class="text-sm font-bold text-gray-600 ml-1 uppercase tracking-wide">লিঙ্গ <span class="text-red-500">*</span></label>
+                    <div class="input-group flex items-center bg-white border border-gray-300 rounded-xl px-3 py-3 mt-2 shadow-sm hover:border-party-green transition-all">
+                        <i class="ph ph-gender-intersex text-2xl text-gray-400 mr-3"></i>
+                        <select id="gender" class="w-full bg-transparent outline-none text-lg font-bold text-gray-800 cursor-pointer">
                             <option value="পুরুষ">পুরুষ</option>
                             <option value="মহিলা">মহিলা</option>
                             <option value="হিজড়া">হিজড়া</option>
@@ -150,34 +148,34 @@
                     </div>
                 </div>
                 <div class="md:col-span-4">
-                    <label class="text-xs font-bold text-gray-500 ml-1 uppercase tracking-wider">নাম (ঐচ্ছিক)</label>
-                    <div class="input-group flex items-center bg-white border border-gray-300 rounded-xl px-3 py-3 mt-1 shadow-sm hover:border-party-green transition-all">
-                        <input type="text" id="nameInput" class="w-full bg-transparent outline-none text-base font-semibold text-gray-700 placeholder-gray-400" placeholder="নামের অংশ...">
+                    <label class="text-sm font-bold text-gray-600 ml-1 uppercase tracking-wide">নাম (ঐচ্ছিক)</label>
+                    <div class="input-group flex items-center bg-white border border-gray-300 rounded-xl px-3 py-3 mt-2 shadow-sm hover:border-party-green transition-all">
+                        <input type="text" id="nameInput" class="w-full bg-transparent outline-none text-lg font-semibold text-gray-800 placeholder-gray-400" placeholder="নামের অংশ...">
                     </div>
                 </div>
                 <div class="md:col-span-12">
-                    <label class="text-xs font-bold text-gray-500 ml-1 uppercase tracking-wider">পিতা বা মাতার নাম (ঐচ্ছিক)</label>
-                    <div class="input-group flex items-center bg-white border border-gray-300 rounded-xl px-3 py-3 mt-1 shadow-sm hover:border-party-green transition-all">
-                        <input type="text" id="parentInput" class="w-full bg-transparent outline-none text-base font-semibold text-gray-700 placeholder-gray-400" placeholder="পিতা বা মাতার নাম...">
+                    <label class="text-sm font-bold text-gray-600 ml-1 uppercase tracking-wide">পিতা বা মাতার নাম (ঐচ্ছিক)</label>
+                    <div class="input-group flex items-center bg-white border border-gray-300 rounded-xl px-3 py-3 mt-2 shadow-sm hover:border-party-green transition-all">
+                        <input type="text" id="parentInput" class="w-full bg-transparent outline-none text-lg font-semibold text-gray-800 placeholder-gray-400" placeholder="পিতা বা মাতার নাম...">
                     </div>
                 </div>
             </div>
 
             <button onclick="searchVoter()" id="searchBtn" class="w-full bg-party-red hover:bg-red-700 text-white font-bold text-xl py-4 rounded-2xl shadow-lg shadow-red-500/40 transition-transform active:scale-95 flex items-center justify-center gap-3 vote-anim border-b-4 border-red-900 tracking-wide">
                 <i class="ph-bold ph-magnifying-glass text-2xl"></i>
-                <span>তথ্য অনুসন্ধান করুন</span>
+                <span>অনুসন্ধান করুন</span>
             </button>
 
-            <div id="statusMsg" class="mt-6 text-center hidden p-4 rounded-xl bg-gray-50 border border-gray-200 text-sm font-medium"></div>
+            <div id="statusMsg" class="mt-6 text-center hidden p-4 rounded-xl bg-gray-50 border border-gray-200 text-base font-medium"></div>
         </div>
 
         <div id="resultsList" class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8"></div>
 
         <div class="mt-12 text-center pb-8">
-            <p class="text-party-green font-bold text-xl font-serif">দেশ গড়তে মার্কায় ভোট দিন</p>
-            <div class="flex items-center justify-center gap-3 mt-3 opacity-80 bg-white/50 inline-flex px-4 py-2 rounded-full">
-                <img src="symbol.png" class="w-6 h-6 grayscale opacity-70">
-                <p class="text-sm font-semibold text-party-dark">ডা. মোঃ আবু নাছের মিডিয়া সেল</p>
+            <p class="text-party-green font-bold text-2xl font-serif drop-shadow-sm">দেশ গড়তে দাঁড়িপাল্লা মার্কায় ভোট দিন</p>
+            <div class="flex items-center justify-center gap-3 mt-4 opacity-90 bg-white/60 inline-flex px-5 py-2.5 rounded-full shadow-sm border border-green-100">
+                <img src="symbol.png" class="w-6 h-6 object-contain">
+                <p class="text-sm font-bold text-party-dark">ডা. মোঃ আবু নাছের মিডিয়া সেল</p>
             </div>
         </div>
     </div>
