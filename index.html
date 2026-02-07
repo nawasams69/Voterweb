@@ -21,11 +21,15 @@
                     },
                     colors: {
                         party: {
-                            green: '#006A4E', 
-                            dark: '#004d38',
+                            green: '#097942', // নতুন হেক্স কোড
+                            dark: '#065f32',  // সবুজের গাঢ় শেড গ্রাডিয়েন্টের জন্য
                             red: '#D32F2F',
                             light: '#E8F5E9'
                         }
+                    },
+                    backgroundImage: {
+                        // চারকোনা (Squarish/Cubes) টেক্সচার
+                        'square-pattern': "url('https://www.transparenttextures.com/patterns/cubes.png')",
                     }
                 }
             }
@@ -33,10 +37,10 @@
     </script>
 
     <style>
-        body { background-color: #f0fdf4; background-image: radial-gradient(#006a4e 0.5px, transparent 0.5px); background-size: 20px 20px; }
-        .glass-panel { background: rgba(255, 255, 255, 0.96); border: 1px solid #bbf7d0; box-shadow: 0 10px 40px -10px rgba(0, 106, 78, 0.2); backdrop-filter: blur(10px); }
-        .input-group:focus-within { border-color: #006A4E; ring: 2px solid #a7f3d0; }
-        .input-group:focus-within i { color: #006A4E; }
+        body { background-color: #f0fdf4; background-image: radial-gradient(#097942 0.5px, transparent 0.5px); background-size: 20px 20px; }
+        .glass-panel { background: rgba(255, 255, 255, 0.96); border: 1px solid #bbf7d0; box-shadow: 0 10px 40px -10px rgba(9, 121, 66, 0.2); backdrop-filter: blur(10px); }
+        .input-group:focus-within { border-color: #097942; ring: 2px solid #a7f3d0; }
+        .input-group:focus-within i { color: #097942; }
         
         .hero-text-shadow { text-shadow: 0 3px 6px rgba(0,0,0,0.4); }
         .slide-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
@@ -44,10 +48,9 @@
         @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(211, 47, 47, 0); } 100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); } }
         .vote-anim { animation: pulse-red 2s infinite; }
 
-        /* Custom Scrollbar for Modal */
         .modal-scroll::-webkit-scrollbar { width: 6px; }
         .modal-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
-        .modal-scroll::-webkit-scrollbar-thumb { background: #006A4E; border-radius: 10px; }
+        .modal-scroll::-webkit-scrollbar-thumb { background: #097942; border-radius: 10px; }
     </style>
 </head>
 <body class="text-slate-800 min-h-screen relative overflow-x-hidden font-sans">
@@ -56,9 +59,9 @@
         <img src="candidate_round.webp" alt="Logo" class="w-full h-full object-cover">
     </div>
 
-    <header class="relative w-full bg-gradient-to-b from-party-green to-party-dark text-white pt-36 md:pt-44 pb-32 px-6 md:px-12 rounded-b-[60px] shadow-2xl z-10 overflow-visible">
+    <header class="relative w-full bg-gradient-to-b from-party-green to-party-dark text-white pt-36 md:pt-48 pb-32 px-6 md:px-12 rounded-b-[60px] shadow-2xl z-10 overflow-visible">
         
-        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] opacity-25 mix-blend-overlay z-0 rounded-b-[60px]"></div>
+        <div class="absolute inset-0 bg-square-pattern opacity-40 mix-blend-overlay z-0 rounded-b-[60px]"></div>
 
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between relative z-10">
             
@@ -86,7 +89,7 @@
                 </div>
             </div>
 
-            <div class="z-20 mt-8 md:-mt-20 md:absolute md:right-0 md:bottom-[-90px] w-64 md:w-96 transition-transform hover:scale-105 duration-500 pointer-events-none">
+            <div class="z-20 mt-8 md:-mt-24 md:absolute md:right-0 md:bottom-[-90px] w-72 md:w-[30rem] transition-transform hover:scale-105 duration-500 pointer-events-none">
                 <img src="candidate_face.png" alt="Candidate" class="w-full drop-shadow-2xl filter brightness-110 contrast-110">
             </div>
         </div>
@@ -187,10 +190,10 @@
 
     <div id="detailModal" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-emerald-900/80 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
-        
-        <div class="flex items-center justify-center h-full p-4"> <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl relative transform transition-all scale-100 slide-up border-4 border-party-green flex flex-col max-h-[90vh]">
+        <div class="flex items-center justify-center h-full p-4">
+            <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl relative transform transition-all scale-100 slide-up border-4 border-party-green flex flex-col max-h-[90vh]">
                 
-                <div class="bg-party-green p-6 border-b border-green-700 flex justify-between items-center text-white bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] bg-blend-overlay shrink-0">
+                <div class="bg-party-green p-6 border-b border-green-700 flex justify-between items-center text-white bg-square-pattern bg-blend-overlay shrink-0">
                     <div class="flex items-center gap-4">
                         <div class="bg-white p-1 rounded-full w-14 h-14 overflow-hidden shadow-md ring-2 ring-white/50">
                             <img src="candidate_round.webp" class="w-full h-full object-cover">
@@ -203,8 +206,7 @@
                     <button onclick="closeModal()" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/30 text-white transition">&times;</button>
                 </div>
 
-                <div id="modalBody" class="p-6 overflow-y-auto modal-scroll">
-                    </div>
+                <div id="modalBody" class="p-6 overflow-y-auto modal-scroll"></div>
 
                 <div class="p-5 bg-gray-50 text-center border-t shrink-0">
                     <button onclick="closeModal()" class="w-full px-6 py-3.5 bg-gray-200 hover:bg-gray-300 rounded-xl text-base font-bold text-gray-700 transition">বন্ধ করুন</button>
@@ -381,9 +383,10 @@
             document.getElementById('modalTitle').innerText = voter.name;
             const body = document.getElementById('modalBody');
             
+            // কিউব প্যাটার্নটি এখানেও অ্যাপ্লাই করা হয়েছে
             let html = `
                 <div class="bg-gradient-to-br from-green-50 to-emerald-100 p-5 rounded-2xl border-2 border-green-200 mb-5 text-center shadow-md relative overflow-hidden">
-                    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] opacity-10 mix-blend-overlay"></div>
+                    <div class="absolute inset-0 bg-square-pattern opacity-10 mix-blend-overlay"></div>
                     <div class="relative z-10">
                         <div class="flex items-center justify-center gap-2 text-party-dark mb-1">
                             <i class="ph-fill ph-house-line text-xl"></i>
