@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ভোটার তথ্য যাচাইকরণ পোর্টাল</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <style>
         body { font-family: 'Hind Siliguri', sans-serif; background: #f0f2f5; }
         .glass { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
@@ -89,14 +91,14 @@
             <div id="errorMsg" class="hidden mt-4 p-3 bg-red-100 text-red-700 rounded-lg text-center text-sm font-medium"></div>
         </div>
 
-        <div id="resultsSection" class="hidden">
+        <div id="resultsSection" class="hidden w-full">
             <h3 class="text-gray-500 font-bold text-sm mb-3 uppercase tracking-wide">ফলাফল</h3>
             <div id="resultsList" class="space-y-3"></div>
         </div>
     </div>
 
     <div id="detailModal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl transform transition-all">
+        <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl transform transition-all scale-100">
             <div class="p-6">
                 <div class="flex justify-between items-start mb-6 border-b pb-4">
                     <div>
@@ -112,12 +114,24 @@
     </div>
 
     <script>
-        // --- CONFIGURATION ---
-        const SUPABASE_URL = "https://qwztesrwzjpwephkwqye.supabase.co"; 
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3enRlc3J3empwd2VwaGt3cXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODIwNjMsImV4cCI6MjA4NTk1ODA2M30.SdV0Z2x2RhEnrH9MkcMpQLZJ8irnHBXVaUJOJyql15Y";
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // ============================================
+        // ১. কনফিগারেশন (আপনার Supabase কী এখানে দিন)
+        // ============================================
+        const SUPABASE_URL = "YOUR_SUPABASE_URL_HERE"; 
+        const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY_HERE";
+        
+        // Supabase ইনিশিয়ালাইজেশন
+        let supabase;
+        try {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        } catch (err) {
+            console.error("Supabase Error:", err);
+            alert("Supabase সংযোগে সমস্যা। দয়া করে কী (Keys) চেক করুন।");
+        }
 
-        // --- DATA ---
+        // ============================================
+        // ২. ডাটাবেস (লোকেশন ও মাস)
+        // ============================================
         const LOCATION_DATA = {
             "চট্টগ্রাম সিটি কর্পোরেশন": {
                 "ওয়ার্ড নং-০৩ (বায়জিদ বোস্তামী)": ["ওয়াজেদিয়া", "নাথপুর", "ভোলাগঞ্জ", "হরিপুর", "নেজামেহামজা", "মিয়ানগর", "ঘাটঘর", "পূর্ব শহীদনগর", "পশ্চিম শহীদনগর", "ছালেহনগর", "আমিননগর", "হাজীরপুল", "হামিদপুর", "খোন্দকারাবাদ", "হাজীপাড়া", "উত্তর মুরাদনগর", "দক্ষিণ মুরাদনগর", "ফকিরাবাদ", "ভক্তপুর", "পাঠানপুর", "ককসুনগর", "সোনাপুর", "করিমগঞ্জ", "জানআলী নগর", "নজীরাবাদ", "মীরপুর", "কামরাবাদ", "সামাদপুর", "জাহানপুর"],
@@ -153,32 +167,60 @@
         const MONTH_MAP_BN = {"জানুয়ারি": "০১", "ফেব্রুয়ারি": "০২", "মার্চ": "০৩", "এপ্রিল": "০৪", "মে": "০৫", "জুন": "০৬", "জুলাই": "০৭", "আগস্ট": "০৮", "সেপ্টেম্বর": "০৯", "অক্টোবর": "১০", "নভেম্বর": "১১", "ডিসেম্বর": "১২"};
         const toBn = n => n.toString().replace(/\d/g, d => "০১২৩৪৫৬৭৮৯"[d]);
 
-        // --- INIT ---
-        window.onload = () => {
+        // ============================================
+        // ৩. লোডিং এবং পপুলেশন লজিক (DOMContentLoaded)
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("অ্যাপ লোড হচ্ছে...");
+            
+            // ১. প্রশাসনিক এলাকা লোড করা
             const mainSel = document.getElementById('mainCat');
-            Object.keys(LOCATION_DATA).forEach(k => mainSel.add(new Option(k, k)));
+            if (mainSel) {
+                Object.keys(LOCATION_DATA).forEach(k => {
+                    mainSel.add(new Option(k, k));
+                });
+            }
 
+            // ২. দিন লোড করা
             const dSel = document.getElementById('dobDay');
-            for(let i=1; i<=31; i++) dSel.add(new Option(toBn(i), toBn(i)));
+            if (dSel) {
+                for(let i=1; i<=31; i++) dSel.add(new Option(toBn(i), toBn(i)));
+            }
 
+            // ৩. মাস লোড করা
             const mSel = document.getElementById('dobMonth');
-            Object.keys(MONTH_MAP_BN).forEach(k => mSel.add(new Option(k, k)));
+            if (mSel) {
+                Object.keys(MONTH_MAP_BN).forEach(k => mSel.add(new Option(k, k)));
+            }
 
+            // ৪. বছর লোড করা
             const ySel = document.getElementById('dobYear');
-            for(let i=2008; i>=1900; i--) ySel.add(new Option(toBn(i), toBn(i)));
-        };
+            if (ySel) {
+                for(let i=2008; i>=1900; i--) ySel.add(new Option(toBn(i), toBn(i)));
+            }
+        });
 
+        // ============================================
+        // ৪. ইন্টার‍্যাকশন লজিক
+        // ============================================
         function updateSubCat() {
             const main = document.getElementById('mainCat').value;
             const subSel = document.getElementById('subCat');
             const areaSel = document.getElementById('areaName');
+            
+            // রিসেট
             subSel.innerHTML = '<option value="">নির্বাচন করুন...</option>';
             areaSel.innerHTML = '<option value="">আগে ওয়ার্ড/ইউনিয়ন বাছুন</option>';
             subSel.disabled = !main;
             areaSel.disabled = true;
 
+            // অপশন যোগ করা (নির্বাচন করুন বাদে)
+            subSel.add(new Option("নির্বাচন করুন", "নির্বাচন করুন"));
+
             if(main) {
-                Object.keys(LOCATION_DATA[main]).forEach(k => subSel.add(new Option(k, k)));
+                Object.keys(LOCATION_DATA[main]).forEach(k => {
+                    subSel.add(new Option(k, k));
+                });
             }
         }
 
@@ -186,8 +228,15 @@
             const main = document.getElementById('mainCat').value;
             const sub = document.getElementById('subCat').value;
             const areaSel = document.getElementById('areaName');
+            
+            // রিসেট
             areaSel.innerHTML = '<option value="">নির্বাচন করুন...</option>';
             areaSel.disabled = (sub === "" || sub === "নির্বাচন করুন");
+            
+            // অপশন যোগ করা (নির্বাচন করুন বাদে)
+            if (!areaSel.disabled) {
+                 areaSel.add(new Option("নির্বাচন করুন", "নির্বাচন করুন"));
+            }
 
             if(main && sub && sub !== "নির্বাচন করুন") {
                 const areas = LOCATION_DATA[main][sub];
@@ -208,6 +257,7 @@
             resSection.classList.add('hidden');
             resList.innerHTML = '';
 
+            // ভ্যালু নেওয়া
             const main = document.getElementById('mainCat').value;
             const sub = document.getElementById('subCat').value;
             const area = document.getElementById('areaName').value;
@@ -218,15 +268,15 @@
             const m = document.getElementById('dobMonth').value;
             const y = document.getElementById('dobYear').value;
 
-            // DOB Logic
+            // জন্ম তারিখ লজিক
             let dobQuery = null;
             if(d !== "দিন" && m !== "মাস" && y !== "বছর") {
-                const dd = d.length === 1 ? "০"+d : d;
+                const dd = d.length === 1 ? "০"+d : d; // প্যাডিং
                 const mm = MONTH_MAP_BN[m];
                 dobQuery = `${dd}/${mm}/${y}`;
             }
 
-            // Validation
+            // ভ্যালিডেশন
             let isValid = false;
             let errorText = "";
 
@@ -251,7 +301,7 @@
             try {
                 let query = supabase.from('Voter').select('*');
                 
-                // Location
+                // ১. এলাকা ফিল্টার
                 if (sub !== "" && sub !== "নির্বাচন করুন" && (area === "" || area === "নির্বাচন করুন")) {
                     const allAreas = LOCATION_DATA[main][sub];
                     query = query.in('voter_area_name', allAreas);
@@ -259,12 +309,13 @@
                     query = query.eq('voter_area_name', area);
                 }
 
-                // Filters
+                // ২. অন্যান্য ফিল্টার
                 query = query.eq('gender', gender);
                 if(dobQuery) query = query.ilike('dob', `%${dobQuery}%`);
                 if(name) query = query.ilike('name', `%${name}%`);
                 if(parent) query = query.or(`father.ilike.%${parent}%,mother.ilike.%${parent}%`);
 
+                // ৩. রেজাল্ট আনা
                 const { data, error } = await query.limit(100);
 
                 if(error) throw error;
@@ -290,6 +341,7 @@
                     });
                 }
             } catch(e) {
+                console.error(e);
                 errDiv.textContent = "সার্ভার এরর: " + e.message;
                 errDiv.classList.remove('hidden');
             }
@@ -297,6 +349,9 @@
             spinner.classList.add('hidden');
         }
 
+        // ============================================
+        // ৫. মোডাল (Pop-up)
+        // ============================================
         function openModal(voter) {
             document.getElementById('modalName').textContent = voter.name;
             const content = document.getElementById('modalContent');
