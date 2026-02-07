@@ -15,51 +15,23 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Hind Siliguri', 'sans-serif'],
-                        num: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0ea5e9', // Sky Blue
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            900: '#0c4a6e', // Deep Navy
-                        }
-                    },
-                    boxShadow: {
-                        'soft': '0 10px 40px -10px rgba(0,0,0,0.08)',
-                    }
+                    fontFamily: { sans: ['Hind Siliguri', 'sans-serif'], num: ['Inter', 'sans-serif'] },
+                    colors: { brand: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 900: '#0c4a6e' } },
+                    boxShadow: { 'soft': '0 10px 40px -10px rgba(0,0,0,0.08)' }
                 }
             }
         }
     </script>
-
     <style>
-        body {
-            background-color: #f3f4f6;
-            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
-            background-size: 24px 24px;
-        }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-        }
+        body { background-color: #f3f4f6; background-image: radial-gradient(#e5e7eb 1px, transparent 1px); background-size: 24px 24px; }
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); }
         .input-group:focus-within i { color: #0284c7; }
         .input-group:focus-within { border-color: #0284c7; ring: 2px solid #e0f2fe; }
-        
-        /* Smooth Fade In */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
-        
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col items-center py-8 px-4">
@@ -90,7 +62,6 @@
                         </select>
                     </div>
                 </div>
-
                 <div>
                     <label class="block text-sm font-semibold text-slate-600 mb-1.5 ml-1">ওয়ার্ড বা ইউনিয়ন</label>
                     <div class="input-group flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 transition shadow-sm">
@@ -100,7 +71,6 @@
                         </select>
                     </div>
                 </div>
-
                 <div>
                     <label class="block text-sm font-semibold text-slate-600 mb-1.5 ml-1">ভোটার এলাকা (গ্রাম)</label>
                     <div class="input-group flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 transition shadow-sm">
@@ -136,7 +106,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="md:col-span-3">
                     <label class="block text-sm font-semibold text-slate-600 mb-1.5 ml-1">লিঙ্গ <span class="text-rose-500">*</span></label>
                     <div class="input-group flex items-center bg-white border border-slate-200 rounded-xl px-3 py-3 shadow-sm">
@@ -148,7 +117,6 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="md:col-span-4">
                     <label class="block text-sm font-semibold text-slate-600 mb-1.5 ml-1">নাম (ঐচ্ছিক)</label>
                     <div class="input-group flex items-center bg-white border border-slate-200 rounded-xl px-3 py-3 shadow-sm">
@@ -156,7 +124,6 @@
                         <input type="text" id="nameInput" class="w-full bg-transparent outline-none text-slate-700 placeholder-slate-400" placeholder="নামের অংশ লিখুন...">
                     </div>
                 </div>
-                
                 <div class="md:col-span-12">
                     <label class="block text-sm font-semibold text-slate-600 mb-1.5 ml-1">পিতা বা মাতার নাম (ঐচ্ছিক)</label>
                     <div class="input-group flex items-center bg-white border border-slate-200 rounded-xl px-3 py-3 shadow-sm">
@@ -175,21 +142,19 @@
         <div id="statusMsg" class="mt-6 text-center hidden p-4 rounded-xl bg-slate-100 border border-slate-200">
             <p class="text-slate-600 font-medium"></p>
         </div>
-
     </div>
 
     <div id="resultsList" class="w-full max-w-5xl mt-8 grid grid-cols-1 md:grid-cols-2 gap-4"></div>
 
     <div id="detailModal" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
-        
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl relative transform transition-all scale-100 overflow-hidden fade-in">
                 
-                <div class="bg-brand-50 p-6 border-b border-brand-100 flex justify-between items-start">
+                <div class="bg-slate-50 p-6 border-b border-slate-100 flex justify-between items-start">
                     <div>
-                        <h3 id="modalTitle" class="text-2xl font-bold text-brand-900"></h3>
-                        <div class="flex items-center gap-2 mt-1 text-brand-600 text-sm font-medium">
+                        <h3 id="modalTitle" class="text-2xl font-bold text-slate-900"></h3>
+                        <div class="flex items-center gap-2 mt-1 text-green-600 text-sm font-medium">
                             <i class="ph-fill ph-check-circle"></i>
                             <span>ভেরিফাইড ভোটার</span>
                         </div>
@@ -199,7 +164,7 @@
                     </button>
                 </div>
 
-                <div id="modalBody" class="p-6 space-y-3">
+                <div id="modalBody" class="p-6">
                     </div>
 
                 <div class="p-6 pt-2 bg-white">
@@ -212,7 +177,7 @@
     </div>
 
     <script>
-        // Data & Logic (No Change in Logic, only connecting to new UI)
+        // Data Configuration
         const LOCATION_DATA = {
             "চট্টগ্রাম সিটি কর্পোরেশন": {
                 "ওয়ার্ড নং-০৩ (বায়জিদ বোস্তামী)": ["ওয়াজেদিয়া", "নাথপুর", "ভোলাগঞ্জ", "হরিপুর", "নেজামেহামজা", "মিয়ানগর", "ঘাটঘর", "পূর্ব শহীদনগর", "পশ্চিম শহীদনগর", "ছালেহনগর", "আমিননগর", "হাজীরপুল", "হামিদপুর", "খোন্দকারাবাদ", "হাজীপাড়া", "উত্তর মুরাদনগর", "দক্ষিণ মুরাদনগর", "ফকিরাবাদ", "ভক্তপুর", "পাঠানপুর", "ককসুনগর", "সোনাপুর", "করিমগঞ্জ", "জানআলী নগর", "নজীরাবাদ", "মীরপুর", "কামরাবাদ", "সামাদপুর", "জাহানপুর"],
@@ -247,68 +212,48 @@
         const MONTH_MAP = {"জানুয়ারি": "০১", "ফেব্রুয়ারি": "০২", "মার্চ": "০৩", "এপ্রিল": "০৪", "মে": "০৫", "জুন": "০৬", "জুলাই": "০৭", "আগস্ট": "০৮", "সেপ্টেম্বর": "০৯", "অক্টোবর": "১০", "নভেম্বর": "১১", "ডিসেম্বর": "১২"};
         const toBn = n => n.toString().replace(/\d/g, d => "০১২৩৪৫৬৭৮৯"[d]);
 
-        // Init Dropdowns
         window.addEventListener('load', () => {
             const mainSel = document.getElementById('mainCat');
             const dSel = document.getElementById('dobDay');
             const mSel = document.getElementById('dobMonth');
             const ySel = document.getElementById('dobYear');
-            
             Object.keys(LOCATION_DATA).forEach(k => mainSel.add(new Option(k, k)));
             for(let i=1; i<=31; i++) dSel.add(new Option(toBn(i), toBn(i)));
             Object.keys(MONTH_MAP).forEach(k => mSel.add(new Option(k, k)));
             for(let i=2008; i>=1900; i--) ySel.add(new Option(toBn(i), toBn(i)));
         });
 
-        // UI Helpers
         function setDisabled(id, disabled) {
             const el = document.getElementById(id);
             el.disabled = disabled;
-            // Visual style change for disabled state
             const parent = el.parentElement;
-            if(disabled) {
-                parent.classList.add('bg-slate-50', 'border-slate-200');
-                parent.classList.remove('bg-white', 'border-slate-300');
-            } else {
-                parent.classList.remove('bg-slate-50', 'border-slate-200');
-                parent.classList.add('bg-white');
-            }
+            if(disabled) { parent.classList.add('bg-slate-50', 'border-slate-200'); parent.classList.remove('bg-white', 'border-slate-300'); } 
+            else { parent.classList.remove('bg-slate-50', 'border-slate-200'); parent.classList.add('bg-white'); }
         }
 
         function updateSubCat() {
             const main = document.getElementById('mainCat').value;
             const sub = document.getElementById('subCat');
             const area = document.getElementById('areaName');
-            
             sub.innerHTML = '<option value="">নির্বাচন করুন...</option>';
             area.innerHTML = '<option value="">আগে ওয়ার্ড বাছুন</option>';
-            
             setDisabled('subCat', !main);
             setDisabled('areaName', true);
-
-            if(main) {
-                Object.keys(LOCATION_DATA[main]).forEach(k => sub.add(new Option(k, k)));
-            }
+            if(main) Object.keys(LOCATION_DATA[main]).forEach(k => sub.add(new Option(k, k)));
         }
 
         function updateArea() {
             const main = document.getElementById('mainCat').value;
             const subVal = document.getElementById('subCat').value;
             const area = document.getElementById('areaName');
-            
             area.innerHTML = '<option value="">নির্বাচন করুন...</option>';
-            
-            if(!subVal) {
-                setDisabled('areaName', true);
-                return;
-            }
-            
+            if(!subVal) { setDisabled('areaName', true); return; }
             setDisabled('areaName', false);
             LOCATION_DATA[main][subVal].forEach(k => area.add(new Option(k, k)));
         }
 
         // ==========================================
-        // KEY ZONE (PASTE HERE)
+        // KEY ZONE
         // ==========================================
         const SUPABASE_URL = "https://qwztesrwzjpwephkwqye.supabase.co"; 
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3enRlc3J3empwd2VwaGt3cXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODIwNjMsImV4cCI6MjA4NTk1ODA2M30.SdV0Z2x2RhEnrH9MkcMpQLZJ8irnHBXVaUJOJyql15Y";
@@ -320,7 +265,6 @@
             const statusText = statusDiv.querySelector('p');
             const list = document.getElementById('resultsList');
             
-            // Loading State
             btn.disabled = true;
             btn.innerHTML = '<i class="ph ph-spinner animate-spin text-2xl"></i><span>অনুসন্ধান চলছে...</span>';
             statusDiv.classList.add('hidden');
@@ -328,40 +272,30 @@
 
             try {
                 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                
                 const main = document.getElementById('mainCat').value;
                 const sub = document.getElementById('subCat').value;
                 const area = document.getElementById('areaName').value;
                 const gender = document.getElementById('gender').value;
                 const name = document.getElementById('nameInput').value.trim();
                 const parent = document.getElementById('parentInput').value.trim();
-                
                 const d = document.getElementById('dobDay').value;
                 const m = document.getElementById('dobMonth').value;
                 const y = document.getElementById('dobYear').value;
 
                 let dobQ = null;
-                if(d!="দিন" && m!="মাস" && y!="বছর") {
-                    dobQ = (d.length==1?"০"+d:d) + "/" + MONTH_MAP[m] + "/" + y;
-                }
+                if(d!="দিন" && m!="মাস" && y!="বছর") dobQ = (d.length==1?"০"+d:d) + "/" + MONTH_MAP[m] + "/" + y;
 
                 let isValid = false;
                 let err = "";
-
                 if(!main) err = "দয়া করে প্রশাসনিক এলাকা নির্বাচন করুন";
-                else if(sub === "") {
-                    if(dobQ && name) isValid = true;
-                    else err = "পুরো এলাকায় খুঁজতে হলে জন্ম তারিখ এবং নাম দুটিই বাধ্যতামূলক";
-                } else if(area === "") {
-                    if(dobQ || name || parent) isValid = true;
-                    else err = "পুরো ওয়ার্ডে খুঁজতে হলে অন্তত নাম, পিতা/মাতা বা জন্ম তারিখ দিন";
-                } else isValid = true;
+                else if(sub === "") { if(dobQ && name) isValid = true; else err = "পুরো এলাকায় খুঁজতে হলে জন্ম তারিখ এবং নাম দুটিই বাধ্যতামূলক"; }
+                else if(area === "") { if(dobQ || name || parent) isValid = true; else err = "পুরো ওয়ার্ডে খুঁজতে হলে অন্তত নাম, পিতা/মাতা বা জন্ম তারিখ দিন"; }
+                else isValid = true;
 
                 if(!isValid && !err) err = "তথ্য দিন";
                 if(err) throw new Error(err);
 
                 let q = supabase.from('Voter').select('*');
-                
                 if(area && area !== "") q = q.eq('voter_area_name', area);
                 else if(sub && sub !== "") q = q.in('voter_area_name', LOCATION_DATA[main][sub]);
 
@@ -381,31 +315,20 @@
                     statusDiv.className = "mt-6 text-center p-4 rounded-xl bg-green-50 border border-green-100 block fade-in";
                     statusText.className = "text-green-600 font-medium";
                     statusText.innerHTML = `<i class="ph-bold ph-check-circle text-lg mr-1"></i> ${data.length} জন ভোটার পাওয়া গেছে`;
-                    
-                    // Generate Cards
                     data.forEach((v, index) => {
                         const card = document.createElement('div');
                         card.className = "bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex items-center justify-between group fade-in";
-                        card.style.animationDelay = `${index * 0.05}s`; // Staggered animation
-                        
+                        card.style.animationDelay = `${index * 0.05}s`;
                         card.innerHTML = `
                             <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-brand-50 group-hover:text-brand-600 transition">
-                                    <i class="ph-fill ph-user text-2xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-slate-800 text-lg leading-tight">${v.name}</h4>
-                                    <p class="text-sm text-slate-500 font-num mt-1">পিতা: ${v.father}</p>
-                                </div>
+                                <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-brand-50 group-hover:text-brand-600 transition"><i class="ph-fill ph-user text-2xl"></i></div>
+                                <div><h4 class="font-bold text-slate-800 text-lg leading-tight">${v.name}</h4><p class="text-sm text-slate-500 font-num mt-1">পিতা: ${v.father}</p></div>
                             </div>
-                            <button onclick='openModal(${JSON.stringify(v)})' class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-brand-600 hover:border-brand-600 hover:text-white transition">
-                                <i class="ph-bold ph-caret-right text-xl"></i>
-                            </button>
+                            <button onclick='openModal(${JSON.stringify(v)})' class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-brand-600 hover:border-brand-600 hover:text-white transition"><i class="ph-bold ph-caret-right text-xl"></i></button>
                         `;
                         list.appendChild(card);
                     });
                 }
-
             } catch(e) {
                 statusDiv.className = "mt-6 text-center p-4 rounded-xl bg-red-50 border border-red-100 block fade-in";
                 statusText.className = "text-red-600 font-medium";
@@ -420,26 +343,38 @@
             document.getElementById('modalTitle').innerText = voter.name;
             const body = document.getElementById('modalBody');
             
+            // 1. Highlighted Polling Center (TOP PRIORITY)
+            let html = `
+                <div class="bg-brand-50 p-4 rounded-2xl border border-brand-100 mb-5 text-center shadow-sm">
+                    <div class="flex items-center justify-center gap-2 text-brand-600 mb-1">
+                        <i class="ph-fill ph-house-line text-lg"></i>
+                        <span class="text-xs font-bold uppercase tracking-wider">আপনার ভোটকেন্দ্র</span>
+                    </div>
+                    <div class="text-xl font-bold text-slate-900 leading-tight">
+                        ${voter.polling_center || 'তথ্য নেই'}
+                    </div>
+                </div>
+            `;
+
+            // 2. Other Details
             const fields = [
+                { label: "ভোটার নং", val: voter.voter_no, icon: "identification-card", font: "font-num" },
                 { label: "পিতা", val: voter.father, icon: "user" },
                 { label: "মাতা", val: voter.mother, icon: "users" },
-                { label: "ভোটার নং", val: voter.voter_no, icon: "identification-card", font: "font-num" },
                 { label: "জন্ম তারিখ", val: voter.dob, icon: "calendar", font: "font-num" },
                 { label: "পেশা", val: voter.profession, icon: "briefcase" },
                 { label: "ঠিকানা", val: voter.address, icon: "map-pin" },
                 { label: "এলাকা", val: voter.voter_area_name, icon: "buildings" },
-                { label: "ভোটকেন্দ্র", val: voter.polling_center, icon: "house" }
             ];
 
-            let html = "";
             fields.forEach(f => {
                 html += `
-                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <div class="flex items-center justify-between p-3 border-b border-slate-50 last:border-0">
                     <div class="flex items-center gap-3 text-slate-500">
                         <i class="ph-fill ph-${f.icon} text-lg"></i>
                         <span class="font-medium text-sm">${f.label}</span>
                     </div>
-                    <span class="font-semibold text-slate-800 ${f.font || ''}">${f.val || '-'}</span>
+                    <span class="font-semibold text-slate-800 text-right ${f.font || ''}">${f.val || '-'}</span>
                 </div>`;
             });
 
@@ -447,9 +382,7 @@
             document.getElementById('detailModal').classList.remove('hidden');
         }
 
-        function closeModal() {
-            document.getElementById('detailModal').classList.add('hidden');
-        }
+        function closeModal() { document.getElementById('detailModal').classList.add('hidden'); }
     </script>
 </body>
 </html>
