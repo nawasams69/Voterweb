@@ -12,10 +12,14 @@
     <style>
         body { font-family: 'Hind Siliguri', sans-serif; background: #f3f4f6; }
         .glass { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .input-field { border: 1px solid #d1d5db; border-radius: 8px; padding: 10px; width: 100%; margin-top: 5px; }
+        .input-field { border: 1px solid #d1d5db; border-radius: 8px; padding: 10px; width: 100%; margin-top: 5px; background-color: #fff; }
+        .input-field:disabled { background-color: #f3f4f6; cursor: not-allowed; color: #9ca3af; }
         .btn-primary { background-color: #2563eb; color: white; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 20px; transition: 0.3s; }
         .btn-primary:hover { background-color: #1d4ed8; }
         .btn-disabled { background-color: #9ca3af; cursor: not-allowed; }
+        
+        /* ফোকাস ইফেক্ট */
+        .input-field:focus { outline: none; border-color: #2563eb; ring: 2px solid #bfdbfe; }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
@@ -146,21 +150,21 @@
             for(let i=1; i<=31; i++) dSel.add(new Option(toBn(i), toBn(i)));
             Object.keys(MONTH_MAP).forEach(k => mSel.add(new Option(k, k)));
             for(let i=2008; i>=1900; i--) ySel.add(new Option(toBn(i), toBn(i)));
-
-            console.log("Safe Script Loaded ✅");
         });
 
         function updateSubCat() {
             const main = document.getElementById('mainCat').value;
             const sub = document.getElementById('subCat');
             const area = document.getElementById('areaName');
+            
+            // "নির্বাচন করুন..." মানেই হলো ডিফল্ট/খালি
             sub.innerHTML = '<option value="">নির্বাচন করুন...</option>';
             area.innerHTML = '<option value="">আগে ওয়ার্ড বাছুন</option>';
             sub.disabled = !main;
             area.disabled = true;
 
             if(main) {
-                sub.add(new Option("নির্বাচন করুন (সব এলাকা)", "নির্বাচন করুন"));
+                // কোনো আলাদা "সব" অপশন নেই, ডিফল্টটাই সব হিসেবে কাজ করবে
                 Object.keys(LOCATION_DATA[main]).forEach(k => sub.add(new Option(k, k)));
             }
         }
@@ -169,15 +173,16 @@
             const main = document.getElementById('mainCat').value;
             const subVal = document.getElementById('subCat').value;
             const area = document.getElementById('areaName');
+            
             area.innerHTML = '<option value="">নির্বাচন করুন...</option>';
             
-            if(!subVal || subVal === "নির্বাচন করুন") {
+            if(!subVal) { // যদি খালি থাকে (মানে "নির্বাচন করুন..." সিলেক্ট করা)
                 area.disabled = true;
                 return;
             }
             
             area.disabled = false;
-            area.add(new Option("নির্বাচন করুন (সব গ্রাম)", "নির্বাচন করুন"));
+            // কোনো আলাদা "সব" অপশন নেই, ডিফল্টটাই সব হিসেবে কাজ করবে
             LOCATION_DATA[main][subVal].forEach(k => area.add(new Option(k, k)));
         }
 
@@ -204,28 +209,23 @@
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3enRlc3J3empwd2VwaGt3cXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODIwNjMsImV4cCI6MjA4NTk1ODA2M30.SdV0Z2x2RhEnrH9MkcMpQLZJ8irnHBXVaUJOJyql15Y";
 
         // ---------------------------------------------------------
-        // এর নিচে আর হাত দেওয়ার দরকার নেই
-        // ---------------------------------------------------------
         
         async function searchVoter() {
             const btn = document.getElementById('searchBtn');
             const msg = document.getElementById('statusMsg');
             const list = document.getElementById('resultsList');
             
-            // UI Reset
             btn.disabled = true;
             btn.innerText = "খোঁজা হচ্ছে...";
             msg.classList.add('hidden');
             list.innerHTML = "";
 
             try {
-                // Client Check
                 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
                 
-                // Inputs
                 const main = document.getElementById('mainCat').value;
-                const sub = document.getElementById('subCat').value;
-                const area = document.getElementById('areaName').value;
+                const sub = document.getElementById('subCat').value; // খালি থাকলে = সব ওয়ার্ড
+                const area = document.getElementById('areaName').value; // খালি থাকলে = সব গ্রাম
                 const gender = document.getElementById('gender').value;
                 const name = document.getElementById('nameInput').value.trim();
                 const parent = document.getElementById('parentInput').value.trim();
@@ -234,7 +234,6 @@
                 const m = document.getElementById('dobMonth').value;
                 const y = document.getElementById('dobYear').value;
 
-                // Validation
                 let dobQ = null;
                 if(d!="দিন" && m!="মাস" && y!="বছর") {
                     dobQ = (d.length==1?"০"+d:d) + "/" + MONTH_MAP[m] + "/" + y;
@@ -243,14 +242,23 @@
                 let isValid = false;
                 let err = "";
 
-                if(!main) err = "প্রশাসনিক এলাকা দিন";
-                else if(sub=="" || sub=="নির্বাচন করুন") {
+                if(!main) {
+                    err = "প্রশাসনিক এলাকা নির্বাচন করুন";
+                } 
+                // লজিক ১: যদি ওয়ার্ড খালি থাকে (মানে সব এলাকা), তবে নাম ও জন্মতারিখ বাধ্যতামূলক
+                else if(sub === "") {
                     if(dobQ && name) isValid = true;
-                    else err = "বড় এলাকায় খুঁজতে হলে নাম ও জন্ম তারিখ দিন";
-                } else if(area=="" || area=="নির্বাচন করুন") {
+                    else err = "পুরো এলাকায় খুঁজতে হলে নাম এবং জন্ম তারিখ উভয়ই দিতে হবে";
+                } 
+                // লজিক ২: যদি গ্রাম খালি থাকে (মানে পুরো ওয়ার্ড), তবে নাম বা জন্মতারিখ বা পিতা/মাতা লাগবে
+                else if(area === "") {
                     if(dobQ || name || parent) isValid = true;
-                    else err = "ওয়ার্ডে খুঁজতে হলে নাম বা জন্ম তারিখ দিন";
-                } else isValid = true;
+                    else err = "পুরো ওয়ার্ডে খুঁজতে হলে অন্তত নাম, পিতা/মাতা বা জন্ম তারিখ দিন";
+                } 
+                // লজিক ৩: নির্দিষ্ট গ্রাম সিলেক্ট করা থাকলে
+                else {
+                    isValid = true;
+                }
 
                 if(!isValid && !err) err = "তথ্য দিন";
                 if(err) throw new Error(err);
@@ -258,8 +266,16 @@
                 // Query
                 let q = supabase.from('Voter').select('*');
                 
-                if(area && area!="নির্বাচন করুন") q = q.eq('voter_area_name', area);
-                else if(sub && sub!="নির্বাচন করুন") q = q.in('voter_area_name', LOCATION_DATA[main][sub]);
+                if(area && area !== "") {
+                    // নির্দিষ্ট গ্রাম
+                    q = q.eq('voter_area_name', area);
+                } else if(sub && sub !== "") {
+                    // নির্দিষ্ট ওয়ার্ড, সব গ্রাম
+                    q = q.in('voter_area_name', LOCATION_DATA[main][sub]);
+                }
+                // else: যদি sub ও খালি থাকে, মানে বিশাল এরিয়া। তখন আমরা লোকেশন ফিল্টার করি না,
+                // কারণ হাজারটা গ্রামের নাম দিয়ে কুয়েরি করলে সমস্যা হবে।
+                // নাম+জন্মতারিখ দিয়ে ফিল্টার করলেই যথেষ্ট।
 
                 q = q.eq('gender', gender);
                 if(dobQ) q = q.ilike('dob', `%${dobQ}%`);
