@@ -27,6 +27,12 @@
         </div>
 
         <div class="glass p-6 md:p-8 mb-8">
+            
+            <div id="js-error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 hidden">
+                <strong class="font-bold">সতর্কতা!</strong>
+                <span class="block sm:inline">জাভাস্ক্রিপ্ট লোড হয়নি। দয়া করে পেজটি রিফ্রেশ করুন।</span>
+            </div>
+
             <div class="mb-6">
                 <h2 class="text-lg font-bold text-gray-700 mb-4 border-l-4 border-blue-600 pl-3">১. এলাকা নির্বাচন</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -98,7 +104,7 @@
     </div>
 
     <div id="detailModal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl transform transition-all scale-100">
+        <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl transform transition-all">
             <div class="p-6">
                 <div class="flex justify-between items-start mb-6 border-b pb-4">
                     <div>
@@ -115,23 +121,9 @@
 
     <script>
         // ============================================
-        // ১. কনফিগারেশন (আপনার Supabase কী এখানে দিন)
+        // ১. ডাটা লোডিং (Supabase এর আগেই এটি লোড হবে)
         // ============================================
-        const SUPABASE_URL = "https://qwztesrwzjpwephkwqye.supabase.co"; 
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3enRlc3J3empwd2VwaGt3cXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODIwNjMsImV4cCI6MjA4NTk1ODA2M30.SdV0Z2x2RhEnrH9MkcMpQLZJ8irnHBXVaUJOJyql15Y";
         
-        // Supabase ইনিশিয়ালাইজেশন
-        let supabase;
-        try {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        } catch (err) {
-            console.error("Supabase Error:", err);
-            alert("Supabase সংযোগে সমস্যা। দয়া করে কী (Keys) চেক করুন।");
-        }
-
-        // ============================================
-        // ২. ডাটাবেস (লোকেশন ও মাস)
-        // ============================================
         const LOCATION_DATA = {
             "চট্টগ্রাম সিটি কর্পোরেশন": {
                 "ওয়ার্ড নং-০৩ (বায়জিদ বোস্তামী)": ["ওয়াজেদিয়া", "নাথপুর", "ভোলাগঞ্জ", "হরিপুর", "নেজামেহামজা", "মিয়ানগর", "ঘাটঘর", "পূর্ব শহীদনগর", "পশ্চিম শহীদনগর", "ছালেহনগর", "আমিননগর", "হাজীরপুল", "হামিদপুর", "খোন্দকারাবাদ", "হাজীপাড়া", "উত্তর মুরাদনগর", "দক্ষিণ মুরাদনগর", "ফকিরাবাদ", "ভক্তপুর", "পাঠানপুর", "ককসুনগর", "সোনাপুর", "করিমগঞ্জ", "জানআলী নগর", "নজীরাবাদ", "মীরপুর", "কামরাবাদ", "সামাদপুর", "জাহানপুর"],
@@ -168,59 +160,62 @@
         const toBn = n => n.toString().replace(/\d/g, d => "০১২৩৪৫৬৭৮৯"[d]);
 
         // ============================================
-        // ৩. লোডিং এবং পপুলেশন লজিক (DOMContentLoaded)
+        // ২. ড্রপডাউন পপুলেট ফাংশন (অবিলম্বে রান করবে)
         // ============================================
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log("অ্যাপ লোড হচ্ছে...");
-            
-            // ১. প্রশাসনিক এলাকা লোড করা
-            const mainSel = document.getElementById('mainCat');
-            if (mainSel) {
-                Object.keys(LOCATION_DATA).forEach(k => {
-                    mainSel.add(new Option(k, k));
-                });
-            }
+        function initDropdowns() {
+            try {
+                // ১. এলাকা সেটআপ
+                const mainSel = document.getElementById('mainCat');
+                if(mainSel && mainSel.options.length <= 1) { // ডুপ্লিকেট রোধে চেক
+                    Object.keys(LOCATION_DATA).forEach(k => mainSel.add(new Option(k, k)));
+                }
 
-            // ২. দিন লোড করা
-            const dSel = document.getElementById('dobDay');
-            if (dSel) {
-                for(let i=1; i<=31; i++) dSel.add(new Option(toBn(i), toBn(i)));
-            }
+                // ২. দিন সেটআপ
+                const dSel = document.getElementById('dobDay');
+                if(dSel && dSel.options.length <= 1) {
+                    for(let i=1; i<=31; i++) dSel.add(new Option(toBn(i), toBn(i)));
+                }
 
-            // ৩. মাস লোড করা
-            const mSel = document.getElementById('dobMonth');
-            if (mSel) {
-                Object.keys(MONTH_MAP_BN).forEach(k => mSel.add(new Option(k, k)));
-            }
+                // ৩. মাস সেটআপ
+                const mSel = document.getElementById('dobMonth');
+                if(mSel && mSel.options.length <= 1) {
+                    Object.keys(MONTH_MAP_BN).forEach(k => mSel.add(new Option(k, k)));
+                }
 
-            // ৪. বছর লোড করা
-            const ySel = document.getElementById('dobYear');
-            if (ySel) {
-                for(let i=2008; i>=1900; i--) ySel.add(new Option(toBn(i), toBn(i)));
+                // ৪. বছর সেটআপ
+                const ySel = document.getElementById('dobYear');
+                if(ySel && ySel.options.length <= 1) {
+                    for(let i=2008; i>=1900; i--) ySel.add(new Option(toBn(i), toBn(i)));
+                }
+                console.log("ড্রপডাউন লোড হয়েছে ✅");
+            } catch (e) {
+                console.error("ড্রপডাউন এরর:", e);
+                document.getElementById('js-error').classList.remove('hidden');
+                document.getElementById('js-error').innerHTML = "মেনু লোড হতে সমস্যা হয়েছে: " + e.message;
             }
-        });
+        }
+
+        // পেজ লোড হওয়ার সাথে সাথেই এটি রান করবে
+        window.onload = initDropdowns; 
 
         // ============================================
-        // ৪. ইন্টার‍্যাকশন লজিক
+        // ৩. ইন্টারেক্টিভ ফাংশনস
         // ============================================
         function updateSubCat() {
             const main = document.getElementById('mainCat').value;
             const subSel = document.getElementById('subCat');
             const areaSel = document.getElementById('areaName');
             
-            // রিসেট
             subSel.innerHTML = '<option value="">নির্বাচন করুন...</option>';
             areaSel.innerHTML = '<option value="">আগে ওয়ার্ড/ইউনিয়ন বাছুন</option>';
             subSel.disabled = !main;
             areaSel.disabled = true;
 
-            // অপশন যোগ করা (নির্বাচন করুন বাদে)
-            subSel.add(new Option("নির্বাচন করুন", "নির্বাচন করুন"));
+            // 'নির্বাচন করুন' (All) অপশন যোগ
+            subSel.add(new Option("নির্বাচন করুন (সব এলাকা)", "নির্বাচন করুন"));
 
             if(main) {
-                Object.keys(LOCATION_DATA[main]).forEach(k => {
-                    subSel.add(new Option(k, k));
-                });
+                Object.keys(LOCATION_DATA[main]).forEach(k => subSel.add(new Option(k, k)));
             }
         }
 
@@ -229,22 +224,49 @@
             const sub = document.getElementById('subCat').value;
             const areaSel = document.getElementById('areaName');
             
-            // রিসেট
             areaSel.innerHTML = '<option value="">নির্বাচন করুন...</option>';
-            areaSel.disabled = (sub === "" || sub === "নির্বাচন করুন");
             
-            // অপশন যোগ করা (নির্বাচন করুন বাদে)
-            if (!areaSel.disabled) {
-                 areaSel.add(new Option("নির্বাচন করুন", "নির্বাচন করুন"));
+            // সাব-ক্যাটাগরি 'নির্বাচন করুন' হলে এলাকা ডিজেবল থাকবে
+            if (sub === "" || sub === "নির্বাচন করুন") {
+                areaSel.disabled = true;
+                areaSel.innerHTML = '<option value="">পুরো ওয়ার্ড নির্বাচন করা হয়েছে</option>';
+                return;
             }
 
-            if(main && sub && sub !== "নির্বাচন করুন") {
+            areaSel.disabled = false;
+            // 'নির্বাচন করুন' (All) অপশন যোগ
+            areaSel.add(new Option("নির্বাচন করুন (সব গ্রাম)", "নির্বাচন করুন"));
+
+            if(main && sub) {
                 const areas = LOCATION_DATA[main][sub];
-                areas.forEach(k => areaSel.add(new Option(k, k)));
+                if(areas) {
+                    areas.forEach(k => areaSel.add(new Option(k, k)));
+                }
             }
         }
 
+        // ============================================
+        // ৪. SUPABASE কানেকশন (সবার শেষে)
+        // ============================================
+        const SUPABASE_URL = "https://qwztesrwzjpwephkwqye.supabase.co"; 
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3enRlc3J3empwd2VwaGt3cXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODIwNjMsImV4cCI6MjA4NTk1ODA2M30.SdV0Z2x2RhEnrH9MkcMpQLZJ8irnHBXVaUJOJyql15Y";
+        
+        let supabase = null;
+
+        // ============================================
+        // ৫. সার্চ লজিক
+        // ============================================
         async function searchVoter() {
+            // Supabase কানেকশন চেক (Late Initialization)
+            if (!supabase) {
+                try {
+                    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                } catch (e) {
+                    alert("ডাটাবেস কানেকশন এরর: কী (Keys) ঠিক আছে তো?");
+                    return;
+                }
+            }
+
             const btn = document.getElementById('searchBtn');
             const spinner = document.getElementById('loadingSpinner');
             const errDiv = document.getElementById('errorMsg');
@@ -257,7 +279,6 @@
             resSection.classList.add('hidden');
             resList.innerHTML = '';
 
-            // ভ্যালু নেওয়া
             const main = document.getElementById('mainCat').value;
             const sub = document.getElementById('subCat').value;
             const area = document.getElementById('areaName').value;
@@ -268,19 +289,21 @@
             const m = document.getElementById('dobMonth').value;
             const y = document.getElementById('dobYear').value;
 
-            // জন্ম তারিখ লজিক
+            // DOB
             let dobQuery = null;
             if(d !== "দিন" && m !== "মাস" && y !== "বছর") {
-                const dd = d.length === 1 ? "০"+d : d; // প্যাডিং
+                const dd = d.length === 1 ? "০"+d : d;
                 const mm = MONTH_MAP_BN[m];
                 dobQuery = `${dd}/${mm}/${y}`;
             }
 
-            // ভ্যালিডেশন
+            // Validation
             let isValid = false;
             let errorText = "";
 
-            if (sub === "" || sub === "নির্বাচন করুন") {
+            if (!main) {
+                errorText = "দয়া করে প্রশাসনিক এলাকা নির্বাচন করুন।";
+            } else if (sub === "" || sub === "নির্বাচন করুন") {
                 if(dobQuery && name) isValid = true;
                 else errorText = "বিশাল এলাকায় খুঁজতে হলে জন্ম তারিখ এবং নাম দুটিই বাধ্যতামূলক।";
             } else if (area === "" || area === "নির্বাচন করুন") {
@@ -290,7 +313,9 @@
                 isValid = true;
             }
 
-            if(!isValid) {
+            if(!isValid && !errorText) errorText = "তথ্য অসম্পূর্ণ।";
+
+            if(errorText) {
                 errDiv.textContent = errorText;
                 errDiv.classList.remove('hidden');
                 btn.disabled = false;
@@ -301,21 +326,24 @@
             try {
                 let query = supabase.from('Voter').select('*');
                 
-                // ১. এলাকা ফিল্টার
-                if (sub !== "" && sub !== "নির্বাচন করুন" && (area === "" || area === "নির্বাচন করুন")) {
-                    const allAreas = LOCATION_DATA[main][sub];
-                    query = query.in('voter_area_name', allAreas);
-                } else if (area !== "" && area !== "নির্বাচন করুন") {
+                // 1. Location Logic
+                // Case A: নির্দিষ্ট গ্রাম
+                if (area !== "" && area !== "নির্বাচন করুন") {
                     query = query.eq('voter_area_name', area);
                 }
+                // Case B: নির্দিষ্ট ওয়ার্ড কিন্তু সব গ্রাম
+                else if (sub !== "" && sub !== "নির্বাচন করুন") {
+                    const allAreas = LOCATION_DATA[main][sub];
+                    query = query.in('voter_area_name', allAreas);
+                }
+                // Case C: বিশাল এরিয়া (কোনো ফিল্টার নেই লোকেশনে, শুধু নাম+DOB দিয়ে খোঁজা হবে)
 
-                // ২. অন্যান্য ফিল্টার
+                // 2. Filters
                 query = query.eq('gender', gender);
                 if(dobQuery) query = query.ilike('dob', `%${dobQuery}%`);
                 if(name) query = query.ilike('name', `%${name}%`);
                 if(parent) query = query.or(`father.ilike.%${parent}%,mother.ilike.%${parent}%`);
 
-                // ৩. রেজাল্ট আনা
                 const { data, error } = await query.limit(100);
 
                 if(error) throw error;
@@ -350,7 +378,7 @@
         }
 
         // ============================================
-        // ৫. মোডাল (Pop-up)
+        // ৬. পপ-আপ (Modal)
         // ============================================
         function openModal(voter) {
             document.getElementById('modalName').textContent = voter.name;
