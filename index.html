@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ভোটার তথ্য যাচাইকরণ পোর্টাল</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Hind Siliguri', sans-serif; background: #f0f2f5; }
+        .glass { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .input-box { border: 1px solid #e5e7eb; transition: all 0.2s; }
+        .input-box:focus { border-color: #2563eb; ring: 2px solid #bfdbfe; outline: none; }
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #2563eb; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="py-8 px-4 flex flex-col items-center min-h-screen">
+
+    <div class="w-full max-w-4xl">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">🗳️ ভোটার তথ্য যাচাইকরণ</h1>
+            <p class="text-gray-500 mt-2">বাংলাদেশ নির্বাচন কমিশন ডাটাবেস অনুসন্ধান</p>
+        </div>
+
+        <div class="glass p-6 md:p-8 mb-8">
+            <div class="mb-6">
+                <h2 class="text-lg font-bold text-gray-700 mb-4 border-l-4 border-blue-600 pl-3">১. এলাকা নির্বাচন</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">প্রশাসনিক এলাকা</label>
+                        <select id="mainCat" class="input-box w-full p-2.5 rounded-lg bg-gray-50" onchange="updateSubCat()">
+                            <option value="">নির্বাচন করুন...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">ওয়ার্ড বা ইউনিয়ন</label>
+                        <select id="subCat" class="input-box w-full p-2.5 rounded-lg bg-gray-50" onchange="updateArea()" disabled>
+                            <option value="">আগে প্রশাসনিক এলাকা বাছুন</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">ভোটার এলাকা (গ্রাম)</label>
+                        <select id="areaName" class="input-box w-full p-2.5 rounded-lg bg-gray-50" disabled>
+                            <option value="">আগে ওয়ার্ড/ইউনিয়ন বাছুন</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-gray-200 mb-6">
+
+            <div class="mb-6">
+                <h2 class="text-lg font-bold text-gray-700 mb-4 border-l-4 border-blue-600 pl-3">২. ব্যক্তি শনাক্তকরণ</h2>
+                
+                <label class="block text-sm font-semibold text-gray-600 mb-1">জন্ম তারিখ (বাংলা)</label>
+                <div class="grid grid-cols-3 gap-3 mb-4">
+                    <select id="dobDay" class="input-box rounded-lg p-2 bg-gray-50"><option>দিন</option></select>
+                    <select id="dobMonth" class="input-box rounded-lg p-2 bg-gray-50"><option>মাস</option></select>
+                    <select id="dobYear" class="input-box rounded-lg p-2 bg-gray-50"><option>বছর</option></select>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">লিঙ্গ <span class="text-red-500">*</span></label>
+                        <select id="gender" class="input-box w-full p-2.5 rounded-lg bg-gray-50">
+                            <option value="পুরুষ">পুরুষ</option>
+                            <option value="মহিলা">মহিলা</option>
+                            <option value="হিজড়া">হিজড়া</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">নাম (ঐচ্ছিক)</label>
+                        <input type="text" id="nameInput" class="input-box w-full p-2.5 rounded-lg" placeholder="নামের অংশ...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">পিতা/মাতা (ঐচ্ছিক)</label>
+                        <input type="text" id="parentInput" class="input-box w-full p-2.5 rounded-lg" placeholder="নামের অংশ...">
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="searchVoter()" id="searchBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition flex justify-center items-center gap-3">
+                <span>অনুসন্ধান করুন</span>
+                <div id="loadingSpinner" class="loader hidden"></div>
+            </button>
+            
+            <div id="errorMsg" class="hidden mt-4 p-3 bg-red-100 text-red-700 rounded-lg text-center text-sm font-medium"></div>
+        </div>
+
+        <div id="resultsSection" class="hidden">
+            <h3 class="text-gray-500 font-bold text-sm mb-3 uppercase tracking-wide">ফলাফল</h3>
+            <div id="resultsList" class="space-y-3"></div>
+        </div>
+    </div>
+
+    <div id="detailModal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl transform transition-all">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-6 border-b pb-4">
+                    <div>
+                        <h3 id="modalName" class="text-2xl font-bold text-blue-600"></h3>
+                        <p class="text-sm text-gray-500 mt-1">বিস্তারিত তথ্য</p>
+                    </div>
+                    <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 text-3xl font-light">&times;</button>
+                </div>
+                <div id="modalContent" class="space-y-3 text-sm text-gray-700"></div>
+                <button onclick="closeModal()" class="w-full mt-6 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 rounded-xl transition">বন্ধ করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const SUPABASE_URL = "https://qwztesrwzjpwephkwqye.supabase.co"; 
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3enRlc3J3empwd2VwaGt3cXllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODIwNjMsImV4cCI6MjA4NTk1ODA2M30.SdV0Z2x2RhEnrH9MkcMpQLZJ8irnHBXVaUJOJyql15Y";
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // --- DATA ---
+        const LOCATION_DATA = {
+            "চট্টগ্রাম সিটি কর্পোরেশন": {
+                "ওয়ার্ড নং-০৩ (বায়জিদ বোস্তামী)": ["ওয়াজেদিয়া", "নাথপুর", "ভোলাগঞ্জ", "হরিপুর", "নেজামেহামজা", "মিয়ানগর", "ঘাটঘর", "পূর্ব শহীদনগর", "পশ্চিম শহীদনগর", "ছালেহনগর", "আমিননগর", "হাজীরপুল", "হামিদপুর", "খোন্দকারাবাদ", "হাজীপাড়া", "উত্তর মুরাদনগর", "দক্ষিণ মুরাদনগর", "ফকিরাবাদ", "ভক্তপুর", "পাঠানপুর", "ককসুনগর", "সোনাপুর", "করিমগঞ্জ", "জানআলী নগর", "নজীরাবাদ", "মীরপুর", "কামরাবাদ", "সামাদপুর", "জাহানপুর"],
+                "ওয়ার্ড নং-০৪ (চাঁদগাও)": ["অদুর পাড়া", "উত্তর চান্দগাঁও বেপারী পাড়া", "উত্তর চান্দগাঁও চৌধুরী পাড়া", "উত্তর চান্দগাঁও চৌধুরী পাড়া শিল্প এলাকা", "উত্তর চান্দগাঁও বড়ুয়া পাড়া", "ওয়াপদা কলোনী", "কোদালকাটা", "চান্দগাঁও আবাসিক এলাকা", "চান্দগাঁও আবাসিক এলাকা ব্লক-এ", "ডালি পাড়া", "খলিফাপাড়া ও দক্ষিণ চান্দগাঁও", "দক্ষিণ পশ্চিম চান্দগাঁও শহীদ পাড়া", "নাথ পাড়া", "নূরুল হক কন্ট্রাকটর বাড়ী", "পাঠানিয়া গোদা", "ফরিদের পাড়া", "মাইজ পাড়া", "মৌলভী পাড়া", "শমসের পাড়া", "হামিদ চর", "হায়দার আলী নজীর বাড়ী ও জালাল খান", "উত্তর চান্দগাঁও হিন্দু পাড়া"],
+                "ওয়ার্ড নং-০৫ (চাঁদগাও)": ["চর মোহরা সি ব্লক", "চর রাঙ্গামাটিয়া", "মোহরা এ ব্লক", "মোহরা বি ব্লক", "মোহরা সি জে এম সি এল কলোনী"],
+                "ওয়ার্ড নং-০৬ (চাঁদগাও)": ["কে,বি,আমান আলী রোড ব্লক-১", "কে,বি,আমান আলী রোড ব্লক-২", "কে,বি,আমান আলী রোড ব্লক-৩", "কে,বি,আমান আলী রোড ব্লক-৪", "পূর্ব ষোলশহর ব্লক-এ", "পূর্ব ষোলশহর ব্লক-বি", "পূর্ব ষোলশহর ব্লক-সি"],
+                "ওয়ার্ড নং-০৭ (পাঁচলাইশ)": ["আমিন অফিসার্স কলোনী", "আমিন লেবার কলোনী", "আতুরার ডিপো", "আলী নগর", "খতিবের হাট", "নাজির পাড়া", "মোমেন বাগ", "বার্মা কলোনী", "বিবির হাট", "মোহাম্মদ নগর", "মোহাম্মদ পুর", "রৌফাবাদ কলোনী", "শান্তি নগর", "হামজার খাঁ লেইন", "হামজার দিঘীর পাড়", "হামজার বাগ", "হামজার বাগ কলোনী", "হিলভিউ", "বন গবেষণাগার"]
+            },
+            "বোয়ালখালী পৌরসভা": {
+                "ওয়ার্ড নং-০১": ["পশ্চিম খিতাবচর (অংশ)", "কধুরখীল (অংশ)"],
+                "ওয়ার্ড নং-০২": ["কধুরখীল (পাঠান পাড়া অংশ)", "পূর্ব গোমদন্ডী (২ নং ওয়ার্ড অংশ)"],
+                "ওয়ার্ড নং-০৩": ["পূর্ব গোমদন্ডী (৩ নং ওয়ার্ড অংশ-১)", "পূর্ব গোমদন্ডী (৩ নং ওয়ার্ড অংশ-২)"],
+                "ওয়ার্ড নং-০৪": ["পূর্ব গোমদন্ডী (৪ নং ওয়ার্ড অংশ-১)", "পূর্ব গোমদন্ডী (৪ নং ওয়ার্ড অংশ-২)"],
+                "ওয়ার্ড নং-০৫": ["পূর্ব গোমদন্ডী (৫ নং ওয়ার্ড অংশ-১)", "পূর্ব গোমদন্ডী (৫ নং ওয়ার্ড অংশ-২)"],
+                "ওয়ার্ড নং-০৬": ["পূর্ব গোমদন্ডী (৬ নং ওয়ার্ড অংশ-১)", "পূর্ব গোমদন্ডী (৬ নং ওয়ার্ড অংশ-২)"],
+                "ওয়ার্ড নং-০৭": ["পশ্চিম গোমদন্ডী (৭ নং ওয়ার্ড অংশ-১)", "পশ্চিম গোমদন্ডী (৭ নং ওয়ার্ড অংশ-২)"],
+                "ওয়ার্ড নং-০৮": ["পশ্চিম গোমদন্ডী (৮ নং ওয়ার্ড অংশ-১)", "পশ্চিম গোমদন্ডী (৮ নং ওয়ার্ড অংশ-২)"],
+                "ওয়ার্ড নং-০৯": ["পশ্চিম গোমদন্ডী (৯ নং ওয়ার্ড অংশ-১)", "পশ্চিম গোমদন্ডী (৯ নং ওয়ার্ড অংশ-২)"]
+            },
+            "ইউনিয়ন পরিষদ (বোয়ালখালী)": {
+                "কধুরখীল ইউনিয়ন": ["কধুরখীল (অংশ) ১ নং ওয়ার্ড", "কধুরখীল (অংশ) ২ নং ওয়ার্ড", "কধুরখীল (অংশ) ৩ নং ওয়ার্ড", "কধুরখীল (অংশ) ৪ নং ওয়ার্ড", "কধুরখীল (অংশ) ৫ নং ওয়ার্ড", "কধুরখীল (অংশ) ৬ নং ওয়ার্ড", "কধুরখীল (অংশ) ৭ নং ওয়ার্ড", "কধুরখীল (অংশ) ৮ নং ওয়ার্ড", "কধুরখীল (অংশ) ৯ নং ওয়ার্ড"],
+                "পশ্চিম গোমদন্ডী ইউনিয়ন": ["চরখিজিরপুর", "চরখিজিরপুর (পূর্ব)", "দক্ষিন চরখিজিরপুর"],
+                "শাকপুরা ইউনিয়ন": ["পশ্চিম শাকপুরা (উত্তর পশ্চিমাংশ)", "পশ্চিম শাকপুরা (২ নং ওয়ার্ড অংশ)", "পশ্চিম শাকপুরা (দক্ষিণাংশ)", "পশ্চিম শাকপুরা (৪ নং ওয়ার্ড অংশ)", "মধ্যম শাকপুরা (৫ নং ওয়ার্ড অংশ)", "মধ্যম শাকপুরা (৬ নং ওয়ার্ড অংশ)", "মধ্যম শাকপুরা (উত্তরাংশ)", "পূর্ব শাকপুরা", "ঘোষখীল (মধ্যম শাকপুরা পূর্বাংশ)"],
+                "সারোয়াতলী ইউনিয়ন": ["পূর্ব সরোয়াতলী ও ছনদন্ডী (পূর্বাংশ)", "পশ্চিম সরোয়াতলী ছনদন্ডী (পশ্চিমাংশ)", "বেংগুরা", "হোরারবাগ", "পশ্চিম খিতাবচর", "পূর্ব খিতাবচর", "ইমামুল্লারচর", "দক্ষিণ সারোয়াতলী", "উত্তর সারোয়াতলী"],
+                "পোপাদিয়া ইউনিয়ন": ["সৈয়দপুর", "উত্তর আকুবদন্ডী", "দক্ষিণ আকুবদন্ডী", "পোপাদিয়া (দক্ষিণাংশ)", "পোপাদিয়া (উত্তরাংশ)", "পোপাদিয়া (অংশ) (পশ্চিমাংশ)", "আকালিয়", "পোপাদিয়া", "বিদুগ্রাম (পশ্চিমাংশ)", "বিদুগ্রাম (পূর্বাংশ)"],
+                "চরনদ্বীপ ইউনিয়ন": ["চরনদ্বীপ (১ নং ওয়ার্ড অংশ)", "পশ্চিম চরনদ্বীপ", "পাঠানপাড়া (৩ নং ওয়ার্ড অংশ)", "বারৈপাড়া (৪ নং ওয়ার্ড অংশ)", "বারৈপাড়া (৫ নং ওয়ার্ড অংশ)", "বারৈপাড়া (৬ নং ওয়ার্ড অংশ)", "চরনদ্বীপ (৭ নং ওয়ার্ড অংশ)", "চরনদ্বীপ (৮ নং ওয়ার্ড অংশ)", "পূর্ব চরনদ্বীপ"],
+                "শ্রীপুর-খরনদ্বীপ ইউনিয়ন": ["পশ্চিম খরনদ্বীপ", "খরনদ্বীপ মাধ্যম", "খরনদ্বীপ", "শ্রীপুর (৪ নং ওয়ার্ড অংশ)", "শ্রীপুর (৫ নং ওয়ার্ড অংশ)", "শ্রীপুর (৬ নং ওয়ার্ড অংশ)", "জৈষ্ট্যপুরা (৭ নং ওয়ার্ড অংশ)", "জৈষ্ট্যপুরা (৮ নং ওয়ার্ড অংশ)", "জৈষ্ট্যপুরা (৯ নং ওয়ার্ড অংশ)"],
+                "আমুচিয়া ইউনিয়ন": ["কানুনগোপাড়া", "কানুনগোপাড়া/বগাচড়া", "আমুচিয়া", "ধোরলা (৪ নং ওয়ার্ড অংশ)", "ধোরলা (৫ নং ওয়ার্ড অংশ)", "পূর্ব ধোরলা/কানুনগোপাড়া", "ধোরলা (৭ নং ওয়ার্ড অংশ)", "ধোরলা (৮ নং ওয়ার্ড অংশ)", "পূর্ব ধোরলা"],
+                "আহল্লা করলডেংগা ইউনিয়ন": ["উত্তর করলডেংগা", "মধ্যম করলডেংগা", "দক্ষিণ করলডেংগা", "দক্ষিণ উত্তর ভূর্ষি", "উত্তর ভূর্ষি (৫ নং ওয়ার্ড অংশ)", "উত্তর ভূর্ষি (৬ নং ওয়ার্ড অংশ)", "আহল্লা সাধারপাড়া", "আহল্লা শেখ চৌধুরী পাড়া", "আহল্লা শেখ চৌধুরী পাড়া (দক্ষিন)"]
+            }
+        };
+
+        const MONTH_MAP_BN = {"জানুয়ারি": "০১", "ফেব্রুয়ারি": "০২", "মার্চ": "০৩", "এপ্রিল": "০৪", "মে": "০৫", "জুন": "০৬", "জুলাই": "০৭", "আগস্ট": "০৮", "সেপ্টেম্বর": "০৯", "অক্টোবর": "১০", "নভেম্বর": "১১", "ডিসেম্বর": "১২"};
+        const toBn = n => n.toString().replace(/\d/g, d => "০১২৩৪৫৬৭৮৯"[d]);
+
+        // --- INIT ---
+        window.onload = () => {
+            const mainSel = document.getElementById('mainCat');
+            Object.keys(LOCATION_DATA).forEach(k => mainSel.add(new Option(k, k)));
+
+            const dSel = document.getElementById('dobDay');
+            for(let i=1; i<=31; i++) dSel.add(new Option(toBn(i), toBn(i)));
+
+            const mSel = document.getElementById('dobMonth');
+            Object.keys(MONTH_MAP_BN).forEach(k => mSel.add(new Option(k, k)));
+
+            const ySel = document.getElementById('dobYear');
+            for(let i=2008; i>=1900; i--) ySel.add(new Option(toBn(i), toBn(i)));
+        };
+
+        function updateSubCat() {
+            const main = document.getElementById('mainCat').value;
+            const subSel = document.getElementById('subCat');
+            const areaSel = document.getElementById('areaName');
+            subSel.innerHTML = '<option value="">নির্বাচন করুন...</option>';
+            areaSel.innerHTML = '<option value="">আগে ওয়ার্ড/ইউনিয়ন বাছুন</option>';
+            subSel.disabled = !main;
+            areaSel.disabled = true;
+
+            if(main) {
+                Object.keys(LOCATION_DATA[main]).forEach(k => subSel.add(new Option(k, k)));
+            }
+        }
+
+        function updateArea() {
+            const main = document.getElementById('mainCat').value;
+            const sub = document.getElementById('subCat').value;
+            const areaSel = document.getElementById('areaName');
+            areaSel.innerHTML = '<option value="">নির্বাচন করুন...</option>';
+            areaSel.disabled = (sub === "" || sub === "নির্বাচন করুন");
+
+            if(main && sub && sub !== "নির্বাচন করুন") {
+                const areas = LOCATION_DATA[main][sub];
+                areas.forEach(k => areaSel.add(new Option(k, k)));
+            }
+        }
+
+        async function searchVoter() {
+            const btn = document.getElementById('searchBtn');
+            const spinner = document.getElementById('loadingSpinner');
+            const errDiv = document.getElementById('errorMsg');
+            const resSection = document.getElementById('resultsSection');
+            const resList = document.getElementById('resultsList');
+
+            btn.disabled = true;
+            spinner.classList.remove('hidden');
+            errDiv.classList.add('hidden');
+            resSection.classList.add('hidden');
+            resList.innerHTML = '';
+
+            const main = document.getElementById('mainCat').value;
+            const sub = document.getElementById('subCat').value;
+            const area = document.getElementById('areaName').value;
+            const gender = document.getElementById('gender').value;
+            const name = document.getElementById('nameInput').value.trim();
+            const parent = document.getElementById('parentInput').value.trim();
+            const d = document.getElementById('dobDay').value;
+            const m = document.getElementById('dobMonth').value;
+            const y = document.getElementById('dobYear').value;
+
+            // DOB Logic
+            let dobQuery = null;
+            if(d !== "দিন" && m !== "মাস" && y !== "বছর") {
+                const dd = d.length === 1 ? "০"+d : d;
+                const mm = MONTH_MAP_BN[m];
+                dobQuery = `${dd}/${mm}/${y}`;
+            }
+
+            // Validation
+            let isValid = false;
+            let errorText = "";
+
+            if (sub === "" || sub === "নির্বাচন করুন") {
+                if(dobQuery && name) isValid = true;
+                else errorText = "বিশাল এলাকায় খুঁজতে হলে জন্ম তারিখ এবং নাম দুটিই বাধ্যতামূলক।";
+            } else if (area === "" || area === "নির্বাচন করুন") {
+                if(dobQuery || name || parent) isValid = true;
+                else errorText = "পুরো ওয়ার্ড/ইউনিয়নে খুঁজতে হলে লিঙ্গের সাথে নাম বা জন্ম তারিখ দিন।";
+            } else {
+                isValid = true;
+            }
+
+            if(!isValid) {
+                errDiv.textContent = errorText;
+                errDiv.classList.remove('hidden');
+                btn.disabled = false;
+                spinner.classList.add('hidden');
+                return;
+            }
+
+            try {
+                let query = supabase.from('Voter').select('*');
+                
+                // Location
+                if (sub !== "" && sub !== "নির্বাচন করুন" && (area === "" || area === "নির্বাচন করুন")) {
+                    const allAreas = LOCATION_DATA[main][sub];
+                    query = query.in('voter_area_name', allAreas);
+                } else if (area !== "" && area !== "নির্বাচন করুন") {
+                    query = query.eq('voter_area_name', area);
+                }
+
+                // Filters
+                query = query.eq('gender', gender);
+                if(dobQuery) query = query.ilike('dob', `%${dobQuery}%`);
+                if(name) query = query.ilike('name', `%${name}%`);
+                if(parent) query = query.or(`father.ilike.%${parent}%,mother.ilike.%${parent}%`);
+
+                const { data, error } = await query.limit(100);
+
+                if(error) throw error;
+
+                if(!data || data.length === 0) {
+                    errDiv.textContent = "❌ কোনো ভোটার পাওয়া যায়নি।";
+                    errDiv.classList.remove('hidden');
+                } else {
+                    resSection.classList.remove('hidden');
+                    data.forEach(voter => {
+                        const card = document.createElement('div');
+                        card.className = "bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center hover:shadow-md transition";
+                        card.innerHTML = `
+                            <div>
+                                <h4 class="font-bold text-gray-800 text-lg">${voter.name || 'নাম নেই'}</h4>
+                                <p class="text-sm text-gray-500 mt-1">পিতা: ${voter.father || '-'} | ভোটার: ${voter.voter_no || '-'}</p>
+                            </div>
+                            <button onclick='openModal(${JSON.stringify(voter).replace(/'/g, "&#39;")})' class="bg-blue-50 text-blue-600 px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-blue-100 transition">
+                                বিস্তারিত
+                            </button>
+                        `;
+                        resList.appendChild(card);
+                    });
+                }
+            } catch(e) {
+                errDiv.textContent = "সার্ভার এরর: " + e.message;
+                errDiv.classList.remove('hidden');
+            }
+            btn.disabled = false;
+            spinner.classList.add('hidden');
+        }
+
+        function openModal(voter) {
+            document.getElementById('modalName').textContent = voter.name;
+            const content = document.getElementById('modalContent');
+            const fields = {
+                "পিতা": voter.father, "মাতা": voter.mother, "লিঙ্গ": voter.gender, "জন্ম তারিখ": voter.dob,
+                "পেশা": voter.profession, "ভোটার নং": voter.voter_no, "ঠিকানা": voter.address,
+                "এলাকা": `${voter.voter_area_name} (${voter.area_code})`, "ভোটকেন্দ্র": voter.polling_center,
+                "সিরিয়াল নং": voter.serial_no
+            };
+            let html = "";
+            for(const [k, v] of Object.entries(fields)) {
+                html += `<div class="flex justify-between py-2 border-b border-gray-100 last:border-0"><span class="font-bold text-gray-500 w-1/3">${k}</span><span class="text-gray-900 w-2/3 text-right">${v || '-'}</span></div>`;
+            }
+            content.innerHTML = html;
+            document.getElementById('detailModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
