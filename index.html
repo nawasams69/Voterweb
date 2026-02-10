@@ -21,14 +21,13 @@
                     },
                     colors: {
                         party: {
-                            green: '#097942', // নতুন হেক্স কোড
-                            dark: '#065f32',  // সবুজের গাঢ় শেড গ্রাডিয়েন্টের জন্য
+                            green: '#097942', 
+                            dark: '#065f32',
                             red: '#D32F2F',
                             light: '#E8F5E9'
                         }
                     },
                     backgroundImage: {
-                        // চারকোনা (Squarish/Cubes) টেক্সচার
                         'square-pattern': "url('https://www.transparenttextures.com/patterns/cubes.png')",
                     }
                 }
@@ -60,24 +59,19 @@
     </div>
 
     <header class="relative w-full bg-gradient-to-b from-party-green to-party-dark text-white pt-36 md:pt-48 pb-32 px-6 md:px-12 rounded-b-[60px] shadow-2xl z-10 overflow-visible">
-        
         <div class="absolute inset-0 bg-square-pattern opacity-40 mix-blend-overlay z-0 rounded-b-[60px]"></div>
 
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between relative z-10">
-            
             <div class="text-center md:text-left z-20 md:w-3/5 mb-10 md:mb-0">
-                
                 <div class="inline-block bg-red-600 text-white px-5 py-2 rounded-full shadow-lg border-2 border-red-400 mb-4 transform hover:scale-105 transition-transform">
                     <span class="text-xl md:text-2xl font-bold uppercase tracking-wider font-serif">চট্টগ্রাম-৮ আসন</span>
                 </div>
-                
                 <h1 class="text-[40px] md:text-[64px] font-bold font-serif mt-2 mb-2 hero-text-shadow leading-none drop-shadow-xl">
                     ডা. মোঃ আবু নাছের
                 </h1>
                 <p class="text-emerald-100 text-xl md:text-2xl font-medium mb-8 opacity-95">
                     বাংলাদেশ জামায়াতে ইসলামী মনোনীত প্রার্থী
                 </p>
-
                 <div class="flex items-center justify-center md:justify-start gap-5 bg-white/10 backdrop-blur-md p-4 rounded-3xl border border-white/20 inline-flex shadow-lg ring-1 ring-white/10">
                     <div class="bg-white p-2 rounded-full shadow-md w-24 h-24 flex items-center justify-center ring-4 ring-white/30">
                         <img src="symbol.png" alt="দাঁড়িপাল্লা" class="w-full h-full object-contain">
@@ -88,7 +82,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="z-20 mt-8 md:-mt-24 md:absolute md:right-0 md:bottom-[-90px] w-72 md:w-[30rem] transition-transform hover:scale-105 duration-500 pointer-events-none">
                 <img src="candidate_face.png" alt="Candidate" class="w-full drop-shadow-2xl filter brightness-110 contrast-110">
             </div>
@@ -333,7 +326,9 @@
                 if(!isValid && !err) err = "তথ্য দিন";
                 if(err) throw new Error(err);
 
-                let q = supabase.from('Voter').select('*');
+                // শুধু প্রয়োজনীয় তথ্য টানবো (Data Optimization)
+                let q = supabase.from('Voter').select('name, father, mother, voter_no, serial_no, dob, profession, address, voter_area_name, polling_center');
+                
                 if(area && area !== "") q = q.eq('voter_area_name', area);
                 else if(sub && sub !== "") q = q.in('voter_area_name', LOCATION_DATA[main][sub]);
 
@@ -383,7 +378,6 @@
             document.getElementById('modalTitle').innerText = voter.name;
             const body = document.getElementById('modalBody');
             
-            // কিউব প্যাটার্নটি এখানেও অ্যাপ্লাই করা হয়েছে
             let html = `
                 <div class="bg-gradient-to-br from-green-50 to-emerald-100 p-5 rounded-2xl border-2 border-green-200 mb-5 text-center shadow-md relative overflow-hidden">
                     <div class="absolute inset-0 bg-square-pattern opacity-10 mix-blend-overlay"></div>
@@ -400,6 +394,7 @@
             `;
 
             const fields = [
+                { label: "ক্রমিক নং", val: voter.serial_no, icon: "hash" },
                 { label: "ভোটার নং", val: voter.voter_no, icon: "identification-card" },
                 { label: "পিতা", val: voter.father, icon: "user" },
                 { label: "মাতা", val: voter.mother, icon: "users" },
